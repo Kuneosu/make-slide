@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corporate — make-slide Reference</title>
+
+  <!-- Pretendard Font -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <!-- JetBrains Mono -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <!-- Prism.js Tomorrow Theme -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+  <style>
+    /* ===== Reset ===== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ===== CSS Variables ===== */
+    :root {
+      --bg: #ffffff;
+      --text: #333333;
+      --text-secondary: #666666;
+      --accent: #1e3a5f;
+      --accent-light: #2c5282;
+      --accent-gold: #c8a45c;
+      --accent-gold-light: #d4b97a;
+      --surface: #f4f5f7;
+      --border: #e0e3e8;
+      --code-bg: #1e2736;
+      --hint-bg: #f0f1f4;
+      --hint-border: #d0d3d8;
+      --hint-color: #999;
+      --navy-bar: #1e3a5f;
+      --font-body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* ===== Body ===== */
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== Progress Bar ===== */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent-gold);
+      transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 1000;
+    }
+
+    /* ===== Slide Counter ===== */
+    .slide-counter {
+      position: fixed;
+      bottom: 24px;
+      right: 32px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+      z-index: 900;
+      user-select: none;
+    }
+
+    /* ===== Keyboard Hints ===== */
+    .hint {
+      position: fixed;
+      bottom: 24px;
+      left: 32px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      z-index: 900;
+      user-select: none;
+    }
+
+    .hint kbd {
+      display: inline-block;
+      background: var(--hint-bg);
+      border: 1px solid var(--hint-border);
+      color: var(--hint-color);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      line-height: 1.6;
+    }
+
+    .hint span {
+      color: var(--hint-color);
+      font-size: 11px;
+      margin-right: 4px;
+    }
+
+    /* ===== Fullscreen Button ===== */
+    .fullscreen-btn {
+      position: fixed;
+      top: 16px;
+      right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 900;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .fullscreen-btn:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* ===== Deck & Slides ===== */
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 80px;
+      opacity: 0;
+      visibility: hidden;
+      overflow-y: auto;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Navy accent bar at top of each slide */
+    .slide::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--navy-bar);
+    }
+
+    /* ===== Stagger Animations ===== */
+    .slide.active .a {
+      animation: staggerIn 0.6s ease forwards;
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    .slide.active .a:nth-child(1) { animation-delay: 0.05s; }
+    .slide.active .a:nth-child(2) { animation-delay: 0.12s; }
+    .slide.active .a:nth-child(3) { animation-delay: 0.19s; }
+    .slide.active .a:nth-child(4) { animation-delay: 0.26s; }
+    .slide.active .a:nth-child(5) { animation-delay: 0.33s; }
+    .slide.active .a:nth-child(6) { animation-delay: 0.40s; }
+    .slide.active .a:nth-child(7) { animation-delay: 0.47s; }
+    .slide.active .a:nth-child(8) { animation-delay: 0.54s; }
+    .slide.active .a:nth-child(9) { animation-delay: 0.61s; }
+    .slide.active .a:nth-child(10) { animation-delay: 0.68s; }
+    .slide.active .a:nth-child(11) { animation-delay: 0.75s; }
+    .slide.active .a:nth-child(12) { animation-delay: 0.82s; }
+
+    @keyframes staggerIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== Typography ===== */
+    h1 {
+      font-size: 3.4rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+
+    h2 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    p {
+      font-size: 1.2rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 700px;
+    }
+
+    .hi {
+      color: var(--accent-gold);
+    }
+
+    /* ===== Slide-specific Layouts ===== */
+
+    /* Title Slide */
+    .slide-title {
+      text-align: center;
+    }
+
+    .slide-title h1 {
+      font-size: 3.6rem;
+      color: var(--accent);
+    }
+
+    .slide-title .subtitle {
+      font-size: 1.35rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
+    .slide-title .date {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--hint-color);
+      letter-spacing: 0.05em;
+    }
+
+    .slide-title .tag {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    /* Gold underline decoration for title */
+    .slide-title h1::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 3px;
+      background: var(--accent-gold);
+      margin: 16px auto 0;
+    }
+
+    /* Agenda / TOC */
+    .toc-list {
+      list-style: none;
+      text-align: left;
+      width: 100%;
+      max-width: 580px;
+    }
+
+    .toc-list li {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 1.2rem;
+      color: var(--text);
+    }
+
+    .toc-list li:last-child {
+      border-bottom: none;
+    }
+
+    .toc-num {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent-gold);
+      font-weight: 600;
+      min-width: 28px;
+    }
+
+    /* Content Slide */
+    .content-body {
+      text-align: left;
+      max-width: 740px;
+      width: 100%;
+    }
+
+    .content-body h2 {
+      margin-bottom: 20px;
+    }
+
+    .content-body h2::after {
+      content: '';
+      display: block;
+      width: 48px;
+      height: 3px;
+      background: var(--accent-gold);
+      margin-top: 10px;
+    }
+
+    .content-body p {
+      margin-bottom: 16px;
+    }
+
+    .content-body ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .content-body ul li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .content-body ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      background: var(--accent-gold);
+      border-radius: 2px;
+    }
+
+    /* Quote Slide */
+    .slide-quote {
+      text-align: center;
+      max-width: 800px;
+    }
+
+    .quote-mark {
+      font-size: 5rem;
+      color: var(--accent-gold);
+      line-height: 1;
+      margin-bottom: -10px;
+      font-family: Georgia, serif;
+    }
+
+    .quote-text {
+      font-size: 1.85rem;
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text);
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .quote-attr {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .quote-attr strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Comparison Slide */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      width: 100%;
+      max-width: 920px;
+    }
+
+    .comparison-col {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      border-top: 3px solid var(--border);
+    }
+
+    .comparison-col.before {
+      border-top-color: var(--text-secondary);
+    }
+
+    .comparison-col.after {
+      border-top-color: var(--accent);
+    }
+
+    .comparison-col h3 {
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .comparison-col.before h3 {
+      color: var(--text-secondary);
+    }
+
+    .comparison-col.after h3 {
+      color: var(--accent);
+    }
+
+    .comparison-col ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .comparison-col ul li {
+      padding: 8px 0;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5;
+    }
+
+    .comparison-col ul li:last-child {
+      border-bottom: none;
+    }
+
+    .comparison-col.before ul li::before {
+      content: '\2717  ';
+      color: #c53030;
+    }
+
+    .comparison-col.after ul li::before {
+      content: '\2713  ';
+      color: #276749;
+    }
+
+    /* Flow / Steps */
+    .steps {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      width: 100%;
+      max-width: 960px;
+      justify-content: center;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      max-width: 200px;
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .step-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .step-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 12px;
+      color: var(--accent-gold);
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      width: 48px;
+    }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+      max-width: 920px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 24px;
+      border-top: 3px solid var(--accent);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      border-top-color: var(--accent-gold);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .card p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Bar Chart */
+    .chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      height: 240px;
+      width: 100%;
+      max-width: 620px;
+      padding: 0 20px;
+    }
+
+    .chart-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-bar {
+      width: 52px;
+      background: var(--accent);
+      border-radius: 4px 4px 0 0;
+      transition: height 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+    }
+
+    .chart-bar-group:nth-child(1) .chart-bar { opacity: 0.50; }
+    .chart-bar-group:nth-child(2) .chart-bar { opacity: 0.65; }
+    .chart-bar-group:nth-child(3) .chart-bar { opacity: 0.80; }
+    .chart-bar-group:nth-child(4) .chart-bar { opacity: 0.92; }
+    .chart-bar-group:nth-child(5) .chart-bar { opacity: 1.00; }
+
+    .chart-value {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .chart-label {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .chart-baseline {
+      width: 100%;
+      max-width: 620px;
+      height: 1px;
+      background: var(--border);
+      margin-top: 0;
+    }
+
+    /* Code Block */
+    .code-container {
+      width: 100%;
+      max-width: 740px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      background: #16202e;
+      border-bottom: 1px solid #2a3a4e;
+    }
+
+    .code-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .code-dot.red { background: #ef4444; }
+    .code-dot.yellow { background: #eab308; }
+    .code-dot.green { background: #22c55e; }
+
+    .code-filename {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #8899aa;
+      margin-left: 8px;
+    }
+
+    .code-container pre {
+      margin: 0;
+      padding: 20px;
+      overflow-x: auto;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+
+    .code-container pre code {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    /* Override Prism background */
+    .code-container pre[class*="language-"] {
+      background: var(--code-bg);
+      margin: 0;
+      border-radius: 0;
+    }
+
+    /* Image Placeholder */
+    .image-placeholder {
+      width: 100%;
+      max-width: 720px;
+      height: 360px;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      background: var(--surface);
+    }
+
+    .image-placeholder .placeholder-icon {
+      font-size: 3rem;
+    }
+
+    .image-placeholder .placeholder-label {
+      font-size: 0.95rem;
+      color: var(--hint-color);
+    }
+
+    .image-placeholder .placeholder-size {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--hint-color);
+    }
+
+    /* Closing Slide */
+    .slide-closing {
+      text-align: center;
+    }
+
+    .slide-closing h1 {
+      font-size: 3.8rem;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+
+    .slide-closing h1::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 3px;
+      background: var(--accent-gold);
+      margin: 16px auto 0;
+    }
+
+    .slide-closing p {
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 24px;
+      margin-top: 32px;
+      justify-content: center;
+    }
+
+    .contact-link {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 8px 20px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .contact-link:hover {
+      border-color: var(--accent);
+      background: rgba(30, 58, 95, 0.06);
+      color: var(--accent);
+    }
+
+    /* ===== Speaker Notes Panel ===== */
+    .notes-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: none;
+      grid-template-columns: 2fr 1fr;
+      gap: 1px;
+      z-index: 950;
+      max-height: 35vh;
+      overflow-y: auto;
+    }
+
+    .notes-panel.open {
+      display: grid;
+    }
+
+    .notes-current,
+    .notes-preview {
+      padding: 20px 28px;
+    }
+
+    .notes-preview {
+      border-left: 1px solid var(--border);
+    }
+
+    .notes-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--hint-color);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .notes-slide-num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .notes-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .notes-next-title {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .slide {
+        padding: 40px 28px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .comparison {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .steps {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .step-arrow {
+        transform: rotate(90deg);
+        width: auto;
+        padding: 0;
+      }
+
+      .chart {
+        gap: 12px;
+        height: 180px;
+      }
+
+      .chart-bar {
+        width: 32px;
+      }
+
+      .hint {
+        display: none;
+      }
+
+      .notes-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .notes-preview {
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+    }
+
+    /* ===== Print / PDF Export ===== */
+    @media print {
+      body {
+        overflow: visible;
+        background: #ffffff;
+      }
+
+      .progress-bar,
+      .slide-counter,
+      .hint,
+      .fullscreen-btn,
+      .notes-panel {
+        display: none !important;
+      }
+
+      .deck {
+        width: auto;
+        height: auto;
+        position: static;
+      }
+
+      .slide {
+        position: relative;
+        opacity: 1;
+        visibility: visible;
+        page-break-after: always;
+        page-break-inside: avoid;
+        width: 100vw;
+        height: 100vh;
+        padding: 60px 80px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .slide .a {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+
+      @page {
+        size: landscape;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- Slide Counter -->
+  <div class="slide-counter" id="counter"></div>
+
+  <!-- Keyboard Hints -->
+  <div class="hint">
+    <kbd>Space</kbd><span>next</span>
+    <kbd>&larr;</kbd><kbd>&rarr;</kbd><span>navigate</span>
+    <kbd>F</kbd><span>fullscreen</span>
+    <kbd>S</kbd><span>notes</span>
+  </div>
+
+  <!-- Fullscreen Button -->
+  <button class="fullscreen-btn" onclick="toggleFullscreen()">&#x26F6; Fullscreen</button>
+
+  <!-- Slide Deck -->
+  <div class="deck">
+
+    <!-- Slide 1: Title -->
+    <div class="slide active" data-notes="Welcome to this corporate presentation. This reference deck demonstrates all available slide types in the Corporate theme. Use the arrow keys, Space, or click to navigate between slides.">
+      <div class="slide-title">
+        <div class="a tag">Reference Deck</div>
+        <h1 class="a">Strategic Growth<br>Initiative</h1>
+        <p class="a subtitle">Quarterly analysis, operational metrics,<br>and forward-looking objectives</p>
+        <p class="a date">2026.03.18</p>
+      </div>
+    </div>
+
+    <!-- Slide 2: Agenda / TOC -->
+    <div class="slide" data-notes="This is the agenda for today's session. We will cover eight key topics in order. Feel free to note any questions for the discussion period at the end.">
+      <h2 class="a">Agenda</h2>
+      <ol class="toc-list">
+        <li class="a"><span class="toc-num">01</span> Executive Summary</li>
+        <li class="a"><span class="toc-num">02</span> Guiding Principles</li>
+        <li class="a"><span class="toc-num">03</span> Comparative Analysis</li>
+        <li class="a"><span class="toc-num">04</span> Implementation Roadmap</li>
+        <li class="a"><span class="toc-num">05</span> Core Capabilities</li>
+        <li class="a"><span class="toc-num">06</span> Performance Data</li>
+        <li class="a"><span class="toc-num">07</span> Technical Reference</li>
+        <li class="a"><span class="toc-num">08</span> Visual Assets</li>
+      </ol>
+    </div>
+
+    <!-- Slide 3: Content with Text Body -->
+    <div class="slide" data-notes="This slide presents the executive summary. Emphasize the three-pillar approach and how each layer supports the overall organizational strategy.">
+      <div class="content-body">
+        <h2 class="a">Executive <span class="hi">Summary</span></h2>
+        <p class="a">
+          A structured operational framework aligns cross-functional teams
+          around shared objectives while preserving domain autonomy.
+          Each functional area maintains clear accountability boundaries
+          and well-defined collaboration interfaces.
+        </p>
+        <ul>
+          <li class="a">Revenue optimization through data-driven decision making</li>
+          <li class="a">Operational efficiency via process standardization</li>
+          <li class="a">Risk mitigation with proactive compliance monitoring</li>
+          <li class="a">Talent retention supported by continuous development programs</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 4: Quote -->
+    <div class="slide" data-notes="This quote underscores the importance of strategic thinking. Pause here to let the audience reflect on how this applies to the current organizational context.">
+      <div class="slide-quote">
+        <div class="a quote-mark">&ldquo;</div>
+        <p class="a quote-text">Strategy without tactics is the slowest route to victory.<br>Tactics without strategy is the noise before defeat.</p>
+        <p class="a quote-attr">&mdash; <strong>Sun Tzu</strong>, The Art of War</p>
+      </div>
+    </div>
+
+    <!-- Slide 5: Comparison (Before vs After) -->
+    <div class="slide" data-notes="This comparison illustrates the operational improvements achieved over the past fiscal year. Highlight the efficiency gains in deployment frequency and the shift to automated compliance processes.">
+      <h2 class="a" style="margin-bottom: 28px;">Before vs After</h2>
+      <div class="comparison">
+        <div class="comparison-col before a">
+          <h3>Before</h3>
+          <ul>
+            <li>Manual reporting cycles (2 weeks)</li>
+            <li>Siloed departmental data</li>
+            <li>Quarterly review cadence</li>
+            <li>Reactive risk management</li>
+            <li>Fragmented communication</li>
+          </ul>
+        </div>
+        <div class="comparison-col after a">
+          <h3>After</h3>
+          <ul>
+            <li>Automated dashboards (real-time)</li>
+            <li>Unified data platform</li>
+            <li>Continuous performance monitoring</li>
+            <li>Proactive risk forecasting</li>
+            <li>Integrated collaboration suite</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Flow / Steps -->
+    <div class="slide" data-notes="Walk through each phase of the implementation roadmap. Emphasize that the sequential approach ensures proper validation before proceeding to the next phase. Each gate has defined acceptance criteria.">
+      <h2 class="a" style="margin-bottom: 36px;">Implementation Roadmap</h2>
+      <div class="steps">
+        <div class="step a">
+          <div class="step-num">1</div>
+          <div class="step-title">Assess</div>
+          <div class="step-desc">Audit current state, identify gaps, define success criteria</div>
+        </div>
+        <div class="step-arrow a">&rarr;</div>
+        <div class="step a">
+          <div class="step-num">2</div>
+          <div class="step-title">Plan</div>
+          <div class="step-desc">Develop resource allocation and timeline milestones</div>
+        </div>
+        <div class="step-arrow a">&rarr;</div>
+        <div class="step a">
+          <div class="step-num">3</div>
+          <div class="step-title">Execute</div>
+          <div class="step-desc">Deploy phased rollout with stakeholder checkpoints</div>
+        </div>
+        <div class="step-arrow a">&rarr;</div>
+        <div class="step a">
+          <div class="step-num">4</div>
+          <div class="step-title">Optimize</div>
+          <div class="step-desc">Measure outcomes, iterate on feedback, scale successes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Cards -->
+    <div class="slide" data-notes="These three capabilities form the core value proposition of the initiative. Spend roughly one minute on each card, providing concrete examples from the project.">
+      <h2 class="a" style="margin-bottom: 28px;">Core Capabilities</h2>
+      <div class="cards">
+        <div class="card a">
+          <span class="card-icon">&#9889;</span>
+          <h3>Operational Efficiency</h3>
+          <p>Streamlined workflows reducing cycle time by 40% across all major business processes and approval chains.</p>
+        </div>
+        <div class="card a">
+          <span class="card-icon">&#128274;</span>
+          <h3>Governance &amp; Compliance</h3>
+          <p>Automated audit trails, role-based access controls, and regulatory compliance monitoring in real-time.</p>
+        </div>
+        <div class="card a">
+          <span class="card-icon">&#128200;</span>
+          <h3>Scalable Infrastructure</h3>
+          <p>Cloud-native architecture supporting elastic capacity from baseline to peak demand without manual intervention.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Data / Chart -->
+    <div class="slide" data-notes="These metrics show revenue growth over five quarters. Note the acceleration beginning in Q3, which correlates with the new platform deployment. The Q5 projection is based on current pipeline data.">
+      <h2 class="a" style="margin-bottom: 8px;">Performance Data</h2>
+      <p class="a" style="margin-bottom: 28px; text-align: center;">Quarterly revenue index (normalized baseline = 100)</p>
+      <div class="chart a">
+        <div class="chart-bar-group">
+          <div class="chart-value">100</div>
+          <div class="chart-bar" style="height: 30%;"></div>
+          <div class="chart-label">Q1</div>
+        </div>
+        <div class="chart-bar-group">
+          <div class="chart-value">118</div>
+          <div class="chart-bar" style="height: 38%;"></div>
+          <div class="chart-label">Q2</div>
+        </div>
+        <div class="chart-bar-group">
+          <div class="chart-value">142</div>
+          <div class="chart-bar" style="height: 52%;"></div>
+          <div class="chart-label">Q3</div>
+        </div>
+        <div class="chart-bar-group">
+          <div class="chart-value">187</div>
+          <div class="chart-bar" style="height: 72%;"></div>
+          <div class="chart-label">Q4</div>
+        </div>
+        <div class="chart-bar-group">
+          <div class="chart-value">231</div>
+          <div class="chart-bar" style="height: 90%;"></div>
+          <div class="chart-label">Q5</div>
+        </div>
+      </div>
+      <div class="chart-baseline a"></div>
+    </div>
+
+    <!-- Slide 9: Code Block -->
+    <div class="slide" data-notes="This code example demonstrates the API integration pattern. Walk through the configuration object, the async fetch wrapper, and the error handling strategy. Mention that this pattern is standardized across all service integrations.">
+      <h2 class="a" style="margin-bottom: 20px;">Technical Reference</h2>
+      <div class="code-container a">
+        <div class="code-header">
+          <span class="code-dot red"></span>
+          <span class="code-dot yellow"></span>
+          <span class="code-dot green"></span>
+          <span class="code-filename">service.js</span>
+        </div>
+        <pre><code class="language-javascript">import { createClient } from '@platform/sdk';
+import { retry } from './utils/resilience';
+
+const client = createClient({
+  endpoint: process.env.API_ENDPOINT,
+  timeout: 5000,
+  retries: 3
+});
+
+// Fetch resource with automatic retry
+export async function getReport(reportId) {
+  return retry(async () => {
+    const response = await client.get(`/reports/${reportId}`);
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+    return response.data;
+  }, { maxAttempts: 3, backoff: 'exponential' });
+}
+
+// Batch processing with concurrency control
+export async function processQueue(items, concurrency = 5) {
+  const results = [];
+  for (let i = 0; i < items.length; i += concurrency) {
+    const batch = items.slice(i, i + concurrency);
+    const batchResults = await Promise.all(
+      batch.map(item => getReport(item.id))
+    );
+    results.push(...batchResults);
+  }
+  return results;
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- Slide 10: Image Placeholder -->
+    <div class="slide" data-notes="Replace this placeholder with your actual organizational chart, architecture diagram, or relevant visual asset. Recommended image size is 1920x1080 for optimal display on presentation screens.">
+      <h2 class="a" style="margin-bottom: 24px;">Organizational Overview</h2>
+      <div class="image-placeholder a">
+        <span class="placeholder-icon">&#128247;</span>
+        <span class="placeholder-label">Image placeholder</span>
+        <span class="placeholder-size">Recommended: 1920 &times; 1080 px</span>
+      </div>
+    </div>
+
+    <!-- Slide 11: Closing / Thank You -->
+    <div class="slide" data-notes="Thank the audience for their time and attention. Open the floor for questions. Share contact information and mention that the full report will be distributed after this session.">
+      <div class="slide-closing">
+        <h1 class="a">Thank You</h1>
+        <p class="a">Questions, feedback, and discussion welcome.</p>
+        <div class="contact-links a">
+          <a href="#" class="contact-link">github.com/user</a>
+          <a href="#" class="contact-link">user@email.dev</a>
+          <a href="#" class="contact-link">@user</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Speaker Notes Panel -->
+  <div class="notes-panel" id="notes-panel">
+    <div class="notes-current">
+      <div class="notes-label">Speaker Notes</div>
+      <div class="notes-slide-num" id="notes-slide-num"></div>
+      <div class="notes-text" id="notes-text"></div>
+    </div>
+    <div class="notes-preview">
+      <div class="notes-label">Next</div>
+      <div class="notes-next-title" id="notes-next"></div>
+    </div>
+  </div>
+
+  <!-- Prism.js Core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <!-- Prism.js JavaScript Language Component -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+  <!-- Inline JS: Navigation, Fullscreen, Speaker Notes -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ===== DOM References =====
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const progressBar = document.getElementById('progress');
+      const counter = document.getElementById('counter');
+      const notesPanel = document.getElementById('notes-panel');
+      const notesSlideNum = document.getElementById('notes-slide-num');
+      const notesText = document.getElementById('notes-text');
+      const notesNext = document.getElementById('notes-next');
+
+      let current = 0;
+      const total = slides.length;
+
+      // ===== Navigation =====
+      function goTo(index) {
+        if (index < 0 || index >= total) return;
+
+        slides[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+
+        updateUI();
+      }
+
+      function next() {
+        goTo(current + 1);
+      }
+
+      function prev() {
+        goTo(current - 1);
+      }
+
+      function updateUI() {
+        // Progress bar
+        const pct = ((current + 1) / total) * 100;
+        progressBar.style.width = pct + '%';
+
+        // Counter
+        counter.textContent = (current + 1) + ' / ' + total;
+
+        // Speaker notes
+        updateNotes();
+      }
+
+      // ===== Speaker Notes =====
+      function updateNotes() {
+        const slideEl = slides[current];
+        const notes = slideEl.getAttribute('data-notes') || 'No notes for this slide.';
+
+        notesSlideNum.textContent = 'Slide ' + (current + 1) + ' of ' + total;
+        notesText.textContent = notes;
+
+        // Next slide title
+        if (current + 1 < total) {
+          const nextSlide = slides[current + 1];
+          const nextTitle = nextSlide.querySelector('h1, h2');
+          notesNext.textContent = nextTitle ? nextTitle.textContent : 'Untitled Slide';
+        } else {
+          notesNext.textContent = '(End of presentation)';
+        }
+      }
+
+      function toggleNotes() {
+        notesPanel.classList.toggle('open');
+      }
+
+      // ===== Fullscreen =====
+      window.toggleFullscreen = function () {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(function () {});
+        } else {
+          document.exitFullscreen().catch(function () {});
+        }
+      };
+
+      // ===== Keyboard Events =====
+      document.addEventListener('keydown', function (e) {
+        // Ignore if user is typing in an input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+            e.preventDefault();
+            next();
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            e.preventDefault();
+            prev();
+            break;
+          case ' ':
+            e.preventDefault();
+            next();
+            break;
+          case 'f':
+          case 'F':
+            e.preventDefault();
+            window.toggleFullscreen();
+            break;
+          case 's':
+          case 'S':
+            e.preventDefault();
+            toggleNotes();
+            break;
+          case 'Home':
+            e.preventDefault();
+            goTo(0);
+            break;
+          case 'End':
+            e.preventDefault();
+            goTo(total - 1);
+            break;
+        }
+      });
+
+      // ===== Click Navigation =====
+      document.querySelector('.deck').addEventListener('click', function (e) {
+        // Don't navigate when clicking on links or buttons
+        if (e.target.closest('a, button, .notes-panel, .code-container')) return;
+
+        const x = e.clientX;
+        const width = window.innerWidth;
+        const leftThird = width / 3;
+
+        if (x < leftThird) {
+          prev();
+        } else {
+          next();
+        }
+      });
+
+      // ===== Touch / Swipe Navigation =====
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchEndX = 0;
+      let touchEndY = 0;
+
+      document.addEventListener('touchstart', function (e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', function (e) {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+      }, { passive: true });
+
+      function handleSwipe() {
+        const diffX = touchStartX - touchEndX;
+        const diffY = touchStartY - touchEndY;
+        const minSwipe = 50;
+
+        // Only process horizontal swipes (ignore vertical)
+        if (Math.abs(diffX) < minSwipe || Math.abs(diffX) < Math.abs(diffY)) return;
+
+        if (diffX > 0) {
+          // Swiped left -> next
+          next();
+        } else {
+          // Swiped right -> prev
+          prev();
+        }
+      }
+
+      // ===== Initialize =====
+      updateUI();
+
+      // Re-highlight code blocks after Prism loads
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAll();
+      }
+    })();
+  </script>
+
+</body>
+</html>

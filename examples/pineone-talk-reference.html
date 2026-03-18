@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI를 실무에 활용하는 방법</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#fafafa;font-family:'Pretendard',sans-serif;-webkit-font-smoothing:antialiased}
+
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 100px;opacity:0;pointer-events:none;transform:translateY(0)}
+.slide.active{opacity:1;pointer-events:auto;z-index:2}
+
+/* Stagger children */
+.slide.active .a{opacity:0;animation:childIn 0.3s ease forwards}
+.a:nth-child(1){animation-delay:0.02s}
+.a:nth-child(2){animation-delay:0.08s}
+.a:nth-child(3){animation-delay:0.14s}
+.a:nth-child(4){animation-delay:0.20s}
+.a:nth-child(5){animation-delay:0.26s}
+.a:nth-child(6){animation-delay:0.32s}
+@keyframes childIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Type */
+.overline{font-size:15px;letter-spacing:6px;color:#666;text-transform:uppercase;margin-bottom:24px}
+.xl{font-size:72px;font-weight:800;color:#1a1a1a;line-height:1.15}
+.lg{font-size:52px;font-weight:800;color:#1a1a1a;line-height:1.2}
+.md{font-size:40px;font-weight:700;color:#1a1a1a;line-height:1.3}
+.sub{font-size:20px;color:#555;margin-top:20px}
+.tag{font-size:13px;letter-spacing:4px;color:#0066cc;text-transform:uppercase;margin-bottom:16px}
+.num{font-size:160px;font-weight:900;color:rgba(0,0,0,0.08);position:absolute;top:30px;right:70px;line-height:1;pointer-events:none}
+.body{font-size:22px;color:#444;line-height:1.9;max-width:720px;margin-top:24px}
+.hi{color:#0066cc;font-weight:600}
+
+/* Quote */
+.qm{font-size:100px;color:#0066cc;line-height:1;margin-bottom:-10px}
+.qt{font-size:36px;font-weight:300;color:#1a1a1a;line-height:1.7;max-width:650px}
+.qt strong{font-weight:700;color:#0a84ff}
+
+/* Flow */
+.flow{display:flex;align-items:center;gap:20px;margin-top:32px}
+.step{padding:22px 30px;background:#fff;border:1px solid #e0e0e0;border-radius:14px;text-align:center;min-width:150px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.step-icon{font-size:28px;margin-bottom:8px;color:#0a84ff}
+.step-label{font-size:17px;color:#2a2a2a;font-weight:500}
+.step-sub{font-size:12px;color:#555;margin-top:4px}
+.arrow{font-size:24px;color:#ccc}
+
+/* Cards */
+.cards{display:flex;gap:20px;margin-top:32px}
+.card{flex:1;padding:28px;background:#fff;border:1px solid #e0e0e0;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.card-icon{font-size:28px;margin-bottom:10px;color:#0a84ff}
+.card h3{font-size:18px;font-weight:600;color:#222;margin-bottom:6px}
+.card p{font-size:14px;color:#444;line-height:1.6}
+
+/* TOC */
+.toc{display:flex;flex-direction:column;gap:14px;margin-top:28px;width:100%;max-width:620px}
+.toc-item{display:flex;align-items:center;gap:20px;padding:18px 24px;background:#fff;border:1px solid #e0e0e0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.toc-n{font-size:28px;font-weight:800;color:#333;min-width:44px;font-family:'JetBrains Mono',monospace}
+.toc-t{font-size:20px;color:#333;font-weight:500;text-align:left}
+.toc-s{font-size:13px;color:#666;margin-top:2px}
+
+/* Compare */
+.cmp{display:flex;gap:24px;margin-top:32px;max-width:780px}
+.cmp-col{flex:1;padding:28px;border-radius:14px}
+.cmp-bad{background:#f8f8f8;border:1px solid #e0e0e0}
+.cmp-good{background:#f8f8f8;border:1px solid #0066cc}
+.cmp-label{font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:700}
+.cmp-bad .cmp-label{color:#888}
+.cmp-good .cmp-label{color:#0066cc}
+.cmp-col p{font-size:17px;color:#333;line-height:1.8;text-align:left}
+
+/* Principles */
+.plist{display:flex;flex-direction:column;gap:16px;margin-top:28px;max-width:680px;width:100%}
+.pr{display:flex;gap:20px;align-items:flex-start;padding:22px 28px;background:rgba(0,0,0,0.015);border-left:3px solid #ddd;border-radius:0 12px 12px 0;text-align:left}
+.pr:hover{border-left-color:#0066cc}
+.pr-n{font-size:24px;font-weight:800;color:#0066cc;min-width:32px}
+.pr h4{font-size:20px;color:#222;font-weight:600;margin-bottom:4px}
+.pr p{font-size:15px;color:#aaa}
+
+/* Layers */
+.layers{display:flex;flex-direction:column;gap:12px;margin-top:28px;max-width:560px;width:100%}
+.ly{padding:22px 28px;border-radius:12px;display:flex;align-items:center;gap:16px;text-align:left}
+.ly-1{background:#eff6ff;border:1px solid #bfdbfe}
+.ly-2{background:#f5f3ff;border:1px solid #ddd6fe}
+.ly-icon{font-size:24px;color:#0a84ff}
+.icon{font-family:'lucide';font-style:normal;font-size:inherit}
+.ly h4{font-size:18px;color:#222;font-weight:600}
+.ly p{font-size:14px;color:#444;margin-top:2px}
+
+/* Phase tabs */
+.phases{display:flex;gap:10px;margin-bottom:24px}
+.ph{padding:8px 20px;border-radius:20px;font-size:14px;font-weight:600;background:rgba(0,0,0,0.02);color:#444;border:1px solid rgba(0,0,0,0.06)}
+.ph.on{background:rgba(0,102,204,0.1);color:#0066cc;border-color:rgba(0,102,204,0.25)}
+
+/* UI */
+.progress{position:fixed;top:0;left:0;height:2px;background:#0066cc;z-index:100;transition:width 0.4s ease}
+.counter{position:fixed;bottom:20px;right:30px;font-size:12px;color:#999;font-family:'JetBrains Mono',monospace;z-index:100}
+.hint{position:fixed;bottom:20px;left:30px;font-size:11px;color:#999;z-index:100;display:flex;gap:12px}
+.hint span{display:flex;align-items:center;gap:4px}
+.k{padding:2px 6px;border-radius:3px;background:#e8e8e8;border:1px solid #ccc;font-family:'JetBrains Mono',monospace;font-size:10px;color:#555}
+.nbtn{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:6px 16px;border-radius:20px;background:#eee;border:1px solid #ddd;color:#666;font-size:11px;cursor:pointer;z-index:100;font-family:'Pretendard',sans-serif}
+.nbtn:hover{color:#0066cc;border-color:#0a84ff}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter"></div>
+<div class="hint"><span><span class="k">Space</span> 다음</span><span><span class="k">←→</span> 이동</span><span><span class="k">F</span> 전체화면</span></div>
+<button class="nbtn" onclick="toggleNotes()">⌨ Notes</button>
+
+<div class="deck">
+
+<!-- 0: 타이틀 -->
+<div class="slide active" data-notes="안녕하세요. 오늘은 AI를 실무에 활용하는 방법에 대해 이야기해보려고 합니다.">
+  <div class="a overline">WEB STUDY 26.03.18</div>
+  <h1 class="a xl">AI를 실무에<br>활용하는 방법</h1>
+  <div class="a sub">프로토타입 제작 · 피그마 UI 구현 · 코드 품질 관리 · 테스트 작성</div>
+</div>
+
+<!-- 1: 도입 -->
+<div class="slide" data-notes="이전에 3D 루빅스 큐브, P-write-vacy, 멀티 에이전트 시스템 등을 발표했었는데요. 그때는 AI로 뭘 만들 수 있는지에 초점이 맞춰져 있었습니다. 이번에는 방향을 바꿔서, AI를 실무에서 어떻게 활용하고 있는지를 공유드리려고 합니다.">
+  <div class="a tag">Introduction</div>
+  <h2 class="a lg">이전 발표</h2>
+  <div class="a cards">
+    <div class="card"><div class="card-icon"><i class="icon lucide-box"></i></div><h3>3D 루빅스 큐브</h3><p>Three.js 인터랙티브 퍼즐</p></div>
+    <div class="card"><div class="card-icon"><i class="icon lucide-shield"></i></div><h3>P-write-vacy</h3><p>프라이버시 보호 에디터</p></div>
+    <div class="card"><div class="card-icon"><i class="icon lucide-bot"></i></div><h3>멀티 에이전트</h3><p>AI 에이전트 협업 시스템</p></div>
+  </div>
+  <p class="a body">AI로 <span class="hi">뭘 만들 수 있는지</span> → AI를 <span class="hi">실무에서 어떻게 쓰는지</span></p>
+</div>
+
+<!-- 2: 목차 -->
+<div class="slide" data-notes="오늘 다룰 내용은 네 가지입니다. 시연용 프로토타입 제작, 피그마에서 웹 UI 구현, 코드 퀄리티 관리, 그리고 테스트 코드 작성입니다.">
+  <div class="a tag">Agenda</div>
+  <h2 class="a lg">오늘 다룰 내용</h2>
+  <div class="toc">
+    <div class="a toc-item"><div class="toc-n">01</div><div><div class="toc-t">시연용 프로토타입 제작</div><div class="toc-s">요구사항 수집 → AI 문서화 → Claude Code 프로토타입</div></div></div>
+    <div class="a toc-item"><div class="toc-n">02</div><div><div class="toc-t">피그마 → 웹 UI 구현</div><div class="toc-s">피그마 캡처 → AI 구현 워크플로우</div></div></div>
+    <div class="a toc-item"><div class="toc-n">03</div><div><div class="toc-t">코드 퀄리티 관리</div><div class="toc-s">AI 구현 → AI 검수 이중 레이어 구조</div></div></div>
+    <div class="a toc-item"><div class="toc-n">04</div><div><div class="toc-t">테스트 코드 작성</div><div class="toc-s">코드 + 기획 → TestCase 문서 → 테스트 코드</div></div></div>
+  </div>
+</div>
+
+<!-- 3: 사례① 타이틀 -->
+<div class="slide" data-notes="첫 번째 사례입니다. 기획 초기 단계에서 빠르게 시연 가능한 프로토타입이 필요한 경우가 있는데요. 성남시 MaaS, LG 위험성 평가, 삼성 시니어 레지던스 같은 프로젝트에서 프로토타입을 여러 번 진행하면서 정리한 방법을 공유드리겠습니다.">
+  <div class="num">01</div>
+  <div class="a tag">Case 01</div>
+  <h1 class="a xl">시연용<br>프로토타입 제작</h1>
+  <div class="a sub">성남시 MaaS · LG 위험성 평가 · 삼성 시니어 레지던스</div>
+</div>
+
+<!-- 4: 사례① 워크플로우 -->
+<div class="slide" data-notes="워크플로우는 세 단계입니다. 먼저 회의록, 기획 초안, 구두 요청 등 형식에 관계없이 모든 정보를 수집합니다. 그다음 수집한 정보를 AI에 넣어서 구조화된 요구사항 문서로 만듭니다. 흩어진 정보들 사이의 연결성을 AI가 빠르게 찾아주거든요. 마지막으로 이 문서를 Claude Code에 넘겨서 프로토타입을 생성합니다. 핵심은 정보 수집과 문서화입니다. 문서의 퀄리티가 프로토타입의 퀄리티를 결정합니다.">
+  <div class="num">01</div>
+  <div class="a tag">Case 01 — Workflow</div>
+  <h2 class="a md">요구사항 수집 → 문서화 → 프로토타입</h2>
+  <div class="a flow">
+    <div class="step"><div class="step-icon"><i class="icon lucide-clipboard-list"></i></div><div class="step-label">정보 수집</div><div class="step-sub">형식 무관, 모든 기획 정보</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="step-icon"><i class="icon lucide-file-text"></i></div><div class="step-label">AI 문서화</div><div class="step-sub">연결성 파악 → 구조화된 문서</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="step-icon"><i class="icon lucide-rocket"></i></div><div class="step-label">Claude Code</div><div class="step-sub">문서 기반 프로토타입 생성</div></div>
+  </div>
+  <p class="a body">핵심은 <span class="hi">정보 수집과 문서화</span><br>문서의 퀄리티가 프로토타입의 퀄리티를 결정</p>
+</div>
+
+<!-- 5: 사례② 타이틀 -->
+<div class="slide" data-notes="두 번째 사례는 피그마 디자인을 웹 UI로 구현하는 작업입니다. 현재 케어노트 프로젝트를 진행하면서 가장 많이 하고 있는 작업이기도 하고요. 기존 방식과 최근 방식이 어떻게 달라졌는지 비교해서 보여드리겠습니다.">
+  <div class="num">02</div>
+  <div class="a tag">Case 02</div>
+  <h1 class="a xl">피그마 →<br>웹 UI 구현</h1>
+  <div class="a sub">피그마 디자인을 웹 UI로 구현하는 워크플로우</div>
+</div>
+
+<!-- 6: 기존 방식 -->
+<div class="slide" data-notes="기존에는 피그마 디자인을 분석해서 레이아웃, 색상, 간격 같은 정보를 텍스트로 정리한 후 AI에게 전달하는 방식이었습니다. 이렇게 구현하고 나서 결과물을 보면서 부분부분 수정을 요청했는데요. 분석하고 텍스트로 정리하는 데 시간이 걸리고, 설명 과정에서 빠지는 부분도 있었습니다.">
+  <div class="num">02</div>
+  <div class="a tag">기존 방식</div>
+  <h2 class="a lg">디자인 분석 →<br>텍스트로 설명 → 구현</h2>
+  <div class="a flow">
+    <div class="step"><div class="step-icon"><i class="icon lucide-eye"></i></div><div class="step-label">디자인 분석</div><div class="step-sub">레이아웃, 색상, 간격</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="step-icon"><i class="icon lucide-file-text"></i></div><div class="step-label">텍스트로 정리</div><div class="step-sub">AI에게 설명 전달</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="step-icon"><i class="icon lucide-code"></i></div><div class="step-label">구현 + 수정</div><div class="step-sub">부분부분 피드백</div></div>
+  </div>
+  <p class="a body">디자인을 분석하고 <span class="hi">텍스트로 설명하는 과정</span>에 시간이 소요<br>설명 과정에서 누락되는 부분도 발생</p>
+</div>
+
+<!-- 7: 최근 방식 -->
+<div class="slide" data-notes="최근에는 AI 모델들의 이미지 분석 능력이 많이 좋아져서, 피그마를 캡처한 이미지를 그대로 전달하는 것만으로도 충분한 결과물이 나옵니다. 복잡한 UI가 아니라면 거의 동일하게 생성해주고요. 특히 Claude Opus 4.5에서 4.6으로 넘어오면서 이 부분이 체감될 정도로 개선됐습니다.">
+  <div class="num">02</div>
+  <div class="a tag">최근 방식</div>
+  <h2 class="a lg">캡처 이미지만으로<br>바로 구현</h2>
+  <div class="a flow">
+    <div class="step"><div class="step-icon"><i class="icon lucide-camera"></i></div><div class="step-label">피그마 캡처</div><div class="step-sub">스크린샷 한 장</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="step-icon"><i class="icon lucide-bot"></i></div><div class="step-label">AI가 분석 + 구현</div><div class="step-sub">이미지 → 코드</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="step-icon"><i class="icon lucide-check-circle"></i></div><div class="step-label">거의 동일한 결과</div><div class="step-sub">복잡한 UI 제외</div></div>
+  </div>
+  <p class="a body">AI 모델의 <span class="hi">이미지 분석 능력 향상</span>으로 텍스트 설명 불필요<br>Opus <span class="hi">4.5 → 4.6</span> 이후 한 번에 동일한 UI를 뽑는 경우가 증가</p>
+</div>
+
+<!-- 9: 코드 퀄리티 타이틀 -->
+<div class="slide" data-notes="세 번째는 코드 퀄리티 관리입니다. AI가 만든 코드의 품질을 어떻게 관리하는지에 대한 이야기입니다.">
+  <div class="num">03</div>
+  <div class="a tag">Case 03</div>
+  <h1 class="a xl">코드 퀄리티<br>관리</h1>
+  <div class="a sub">AI 구현 → AI 검수 이중 레이어 구조</div>
+</div>
+
+<!-- 10: 코드 퀄리티 내용 -->
+<div class="slide" data-notes="AI가 만든 코드를 다시 AI로 검수하는 이중 레이어 구조를 사용하고 있습니다. Layer 1에서 Claude Code가 UI를 구현하면, Layer 2에서 커스텀 Skill을 통해 React Best Practice에 맞는지 검수합니다. 컴포넌트 분리, 네이밍 컨벤션, 리렌더링 최적화 같은 부분이 이 과정에서 자동으로 개선됩니다.">
+  <div class="num">03</div>
+  <h2 class="a lg">이중 레이어 구조</h2>
+  <div class="a layers">
+    <div class="ly ly-1"><div class="ly-icon"><i class="icon lucide-bot"></i></div><div><h4>Layer 1 — AI 구현</h4><p>Claude Code로 UI 구현</p></div></div>
+    <div style="color:#666;font-size:24px">↓</div>
+    <div class="ly ly-2"><div class="ly-icon"><i class="icon lucide-search-check"></i></div><div><h4>Layer 2 — AI 검수</h4><p>커스텀 Skill로 Best Practice 적용</p></div></div>
+  </div>
+  <p class="a body">컴포넌트 분리 · 네이밍 · 리렌더링 최적화<br><span class="hi">AI가 만든 코드를 AI로 검수</span>하는 구조</p>
+</div>
+
+<!-- 10: 테스트 타이틀 -->
+<div class="slide" data-notes="마지막으로 테스트 코드 작성입니다.">
+  <div class="num">04</div>
+  <div class="a tag">Case 04</div>
+  <h1 class="a xl">테스트 코드<br>작성</h1>
+  <div class="a sub">코드 분석 → TC 문서 생성 → 검토 → 테스트 코드</div>
+</div>
+
+<!-- 11: 테스트 내용 -->
+<div class="slide" data-notes="코드를 AI에게 주고 바로 테스트를 생성하면, 구현 사실만 확인하는 형식적인 테스트가 나오는 경우가 많습니다. 그래서 저는 코드를 먼저 분석해서 TestCase 문서를 생성하고, TC를 검토한 후에 그 TC를 기반으로 테스트 코드를 작성하는 방식을 사용하고 있는데요. 중간에 TC 단계를 하나 거치는 것만으로도 테스트 품질이 확실히 달라집니다.">
+  <div class="num">04</div>
+  <h2 class="a lg">코드 → 바로 테스트 vs<br>코드 → TC → 테스트</h2>
+  <div class="a cmp">
+    <div class="cmp-col cmp-bad">
+      <div class="cmp-label">일반적 접근</div>
+      <p>코드 → AI → 테스트 생성<br><br>구현 사실만 확인하는<br>형식적인 테스트가 나옴</p>
+    </div>
+    <div class="cmp-col cmp-good">
+      <div class="cmp-label">더 나은 접근</div>
+      <p>코드 분석 → <strong style="color:#0066cc">TC 문서 생성</strong> → 검토 → 테스트 코드<br><br>TC를 먼저 만들고 검토하면<br>훨씬 정밀한 테스트가 나옴</p>
+    </div>
+  </div>
+  <p class="a body"><span class="hi">중간 단계(TC)를 거치는 것</span>만으로 테스트 품질이 크게 달라진다</p>
+</div>
+
+<!-- 11: 핵심 문구 -->
+<div class="slide" data-notes="마지막으로 오늘 발표를 한 문장으로 정리하자면 이겁니다. 프롬프트를 잘 쓰는 것보다 업무 프로세스를 잘 설계하는 게 더 중요하다고 생각합니다.">
+  <div class="a qt">"실무에서 AI를 잘 활용하기 위해 중요한 것은<br>프롬프트를 잘 쓰는 게 아니라,<br><strong>업무 프로세스를 잘 설계하는 것"</strong></div>
+</div>
+
+<!-- 12: 감사합니다 -->
+<div class="slide" data-notes="감사합니다.">
+  <h1 class="a xl">감사합니다</h1>
+</div>
+
+</div>
+
+<script>
+const slides = [...document.querySelectorAll('.slide')];
+let cur = 0, busy = false;
+
+function update() {
+  document.getElementById('progress').style.width = (cur / (slides.length - 1) * 100) + '%';
+  document.getElementById('counter').textContent = (cur + 1) + ' / ' + slides.length;
+  updateNotes();
+}
+
+function go(to) {
+  if (busy || to === cur || to < 0 || to >= slides.length) return;
+  busy = true;
+
+  const old = slides[cur];
+  const nxt = slides[to];
+
+  // Simple: hide old, show new
+  old.style.transition = 'opacity 0.15s ease';
+  old.style.opacity = '0';
+
+  setTimeout(() => {
+    old.classList.remove('active');
+    old.style.transition = '';
+
+    nxt.style.opacity = '0';
+    nxt.classList.add('active');
+
+    // Force reflow then fade in
+    nxt.offsetHeight;
+    nxt.style.transition = 'opacity 0.2s ease';
+    nxt.style.opacity = '1';
+
+    cur = to;
+    update();
+
+    setTimeout(() => {
+      nxt.style.transition = '';
+      busy = false;
+    }, 200);
+  }, 150);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); go(cur + 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(cur - 1); }
+  else if (e.key.toLowerCase() === 'f') {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+  else if (e.key.toLowerCase() === 'n') toggleNotes();
+});
+
+let tx = 0;
+document.addEventListener('touchstart', e => tx = e.touches[0].clientX);
+document.addEventListener('touchend', e => {
+  const d = tx - e.changedTouches[0].clientX;
+  if (Math.abs(d) > 50) d > 0 ? go(cur + 1) : go(cur - 1);
+});
+
+let nw = null;
+function toggleNotes() {
+  if (nw && !nw.closed) { nw.close(); nw = null; return; }
+  nw = window.open('', 'Notes', 'width=520,height=420,top=80,left=80');
+  nw.document.write(`<!DOCTYPE html><html><head><style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Pretendard',sans-serif;background:#fafafa;color:#333;padding:32px;font-size:18px;line-height:1.8}
+    h3{color:#0066cc;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+    #sn{color:#888;font-size:12px;margin-bottom:10px;font-family:monospace}
+  </style></head><body><div id="sn"></div><h3>Speaker Notes</h3><div id="nt"></div></body></html>`);
+  setTimeout(updateNotes, 100);
+}
+
+function updateNotes() {
+  if (!nw || nw.closed) return;
+  try {
+    nw.document.getElementById('nt').textContent = slides[cur].dataset.notes || '(없음)';
+    nw.document.getElementById('sn').textContent = 'Slide ' + (cur + 1) + ' / ' + slides.length;
+  } catch(e) {}
+}
+
+update();
+</script>
+</body>
+</html>

@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magazine — make-slide Reference</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <style>
+    /* ========================================
+       RESET
+    ======================================== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #ffffff;
+      font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ========================================
+       CSS VARIABLES
+    ======================================== */
+    :root {
+      --bg-white: #ffffff;
+      --bg-light: #f8f8f8;
+      --bg-dark: #111111;
+      --bg-black: #000000;
+      --text-primary: #111111;
+      --text-secondary: #555555;
+      --text-muted: #888888;
+      --accent: #e63946;
+      --accent-dark: #c5303c;
+      --contrast: #000000;
+      --surface: #f8f8f8;
+      --border: #e0e0e0;
+      --code-bg: #1e1e1e;
+    }
+
+    /* ========================================
+       PROGRESS BAR
+    ======================================== */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      transition: width 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+      z-index: 1000;
+      border-radius: 0 2px 2px 0;
+      box-shadow: 0 0 8px rgba(230, 57, 70, 0.35);
+    }
+
+    /* ========================================
+       SLIDE COUNTER
+    ======================================== */
+    .slide-counter {
+      position: fixed;
+      bottom: 24px;
+      right: 32px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(17, 17, 17, 0.35);
+      font-variant-numeric: tabular-nums;
+      z-index: 100;
+      transition: color 0.4s ease;
+    }
+
+    .slide-counter.on-dark {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* ========================================
+       KEYBOARD HINTS
+    ======================================== */
+    .hint {
+      position: fixed;
+      bottom: 24px;
+      left: 32px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      z-index: 100;
+      font-size: 12px;
+      color: rgba(17, 17, 17, 0.3);
+      transition: color 0.4s ease;
+    }
+
+    .hint.on-dark {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .hint kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 6px;
+      font-family: 'Pretendard Variable', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(17, 17, 17, 0.4);
+      background: rgba(17, 17, 17, 0.06);
+      border: 1px solid rgba(17, 17, 17, 0.12);
+      border-radius: 6px;
+      transition: background 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+    }
+
+    .hint.on-dark kbd {
+      color: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ========================================
+       FULLSCREEN BUTTON
+    ======================================== */
+    .fullscreen-btn {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(17, 17, 17, 0.06);
+      border: 1px solid rgba(17, 17, 17, 0.1);
+      border-radius: 10px;
+      color: rgba(17, 17, 17, 0.4);
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 100;
+      transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    }
+
+    .fullscreen-btn:hover {
+      background: rgba(17, 17, 17, 0.1);
+      border-color: rgba(17, 17, 17, 0.18);
+      color: rgba(17, 17, 17, 0.7);
+      transform: scale(1.05);
+    }
+
+    .fullscreen-btn.on-dark {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .fullscreen-btn.on-dark:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* ========================================
+       SPEAKER NOTES PANEL
+    ======================================== */
+    .notes-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1a1a1a;
+      color: #f0f0f0;
+      border-top: 1px solid #333;
+      padding: 20px 32px;
+      font-size: 14px;
+      line-height: 1.7;
+      z-index: 200;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .notes-panel.visible {
+      transform: translateY(0);
+    }
+
+    .notes-panel .notes-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #666;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    /* ========================================
+       DECK & SLIDES
+    ======================================== */
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 100px;
+      opacity: 0;
+      visibility: hidden;
+      overflow-y: auto;
+      transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), visibility 0.6s;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Slide variants */
+    .slide-white {
+      background: var(--bg-white);
+      color: var(--text-primary);
+    }
+
+    .slide-light {
+      background: var(--bg-light);
+      color: var(--text-primary);
+    }
+
+    .slide-dark {
+      background: var(--bg-dark);
+      color: #ffffff;
+    }
+
+    .slide-black {
+      background: var(--bg-black);
+      color: #ffffff;
+    }
+
+    .slide-accent {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    /* ========================================
+       STAGGER ANIMATIONS
+    ======================================== */
+    .slide .a {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .slide.active .a {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide.active .a:nth-child(1)  { transition-delay: 0.1s; }
+    .slide.active .a:nth-child(2)  { transition-delay: 0.2s; }
+    .slide.active .a:nth-child(3)  { transition-delay: 0.3s; }
+    .slide.active .a:nth-child(4)  { transition-delay: 0.4s; }
+    .slide.active .a:nth-child(5)  { transition-delay: 0.5s; }
+    .slide.active .a:nth-child(6)  { transition-delay: 0.6s; }
+    .slide.active .a:nth-child(7)  { transition-delay: 0.7s; }
+    .slide.active .a:nth-child(8)  { transition-delay: 0.8s; }
+    .slide.active .a:nth-child(9)  { transition-delay: 0.9s; }
+    .slide.active .a:nth-child(10) { transition-delay: 1.0s; }
+
+    /* ========================================
+       EDITORIAL TYPOGRAPHY
+    ======================================== */
+    .xl {
+      font-size: 96px;
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .lg {
+      font-size: 54px;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .md {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .sm {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.6;
+      letter-spacing: 0;
+    }
+
+    .xs {
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .text-center { text-align: center; }
+    .text-left   { text-align: left; }
+
+    .text-thin {
+      font-weight: 300;
+    }
+
+    .text-heavy {
+      font-weight: 900;
+    }
+
+    .text-upper {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .text-secondary {
+      color: var(--text-secondary);
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    .text-accent {
+      color: var(--accent);
+    }
+
+    .mt-1 { margin-top: 16px; }
+    .mt-2 { margin-top: 32px; }
+    .mt-3 { margin-top: 48px; }
+    .mb-1 { margin-bottom: 16px; }
+    .mb-2 { margin-bottom: 32px; }
+    .w-full { width: 100%; }
+
+    /* ========================================
+       SLIDE 1 — TITLE (ASYMMETRIC)
+    ======================================== */
+    .title-slide {
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: stretch;
+      padding: 0;
+      gap: 0;
+    }
+
+    .title-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 80px;
+      gap: 24px;
+    }
+
+    .title-left .category-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      background: rgba(230, 57, 70, 0.08);
+      padding: 6px 16px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    .title-left .title-xl {
+      font-size: 76px;
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+    }
+
+    .title-left .title-sub {
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      max-width: 440px;
+    }
+
+    .title-left .title-meta {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .title-right {
+      width: 38%;
+      min-width: 300px;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title-right::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent) 0%, #d62839 50%, #c5303c 100%);
+    }
+
+    .title-right .hero-symbol {
+      position: relative;
+      z-index: 1;
+      font-size: 180px;
+      color: rgba(255, 255, 255, 0.15);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      line-height: 1;
+    }
+
+    /* ========================================
+       SLIDE 2 — AGENDA
+    ======================================== */
+    .agenda-list {
+      list-style: none;
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .agenda-list li {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .agenda-list li:last-child {
+      border-bottom: none;
+    }
+
+    .agenda-list .num {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      min-width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      border-radius: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ========================================
+       SLIDE 3 — CONTENT (SPLIT LAYOUT)
+    ======================================== */
+    .content-split {
+      display: flex;
+      width: 100%;
+      max-width: 1100px;
+      gap: 64px;
+      align-items: flex-start;
+    }
+
+    .content-headline {
+      flex: 0 0 40%;
+    }
+
+    .content-headline h2 {
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+    }
+
+    .content-headline .accent-line {
+      width: 48px;
+      height: 4px;
+      background: var(--accent);
+      margin-top: 20px;
+      border-radius: 2px;
+    }
+
+    .content-body {
+      flex: 1;
+    }
+
+    .content-body p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .content-body ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .content-body ul li {
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .content-body ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 1px;
+    }
+
+    /* ========================================
+       SLIDE 4 — QUOTE (EDITORIAL)
+    ======================================== */
+    .quote-editorial {
+      max-width: 900px;
+      position: relative;
+      padding-left: 48px;
+    }
+
+    .quote-editorial .quote-mark-large {
+      position: absolute;
+      top: -30px;
+      left: -10px;
+      font-size: 180px;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: var(--accent);
+      opacity: 0.15;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .quote-editorial .quote-text {
+      font-size: 40px;
+      font-weight: 300;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      position: relative;
+      z-index: 1;
+    }
+
+    .quote-editorial .quote-text em {
+      font-style: normal;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .quote-editorial .quote-rule {
+      width: 48px;
+      height: 3px;
+      background: var(--accent);
+      margin: 28px 0;
+      border-radius: 2px;
+    }
+
+    .quote-editorial .quote-attr {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.02em;
+    }
+
+    .quote-editorial .quote-role {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ========================================
+       SLIDE 5 — COMPARISON (BEFORE / AFTER)
+    ======================================== */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .compare-col {
+      padding: 40px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .compare-col.col-before {
+      background: #ffffff;
+    }
+
+    .compare-col.col-after {
+      background: var(--bg-dark);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .compare-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 4px 12px;
+      border-radius: 3px;
+      margin-bottom: 20px;
+    }
+
+    .col-before .compare-label {
+      background: rgba(17, 17, 17, 0.06);
+      color: var(--text-muted);
+    }
+
+    .col-after .compare-label {
+      background: rgba(230, 57, 70, 0.2);
+      color: var(--accent);
+    }
+
+    .compare-col h3 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .col-before h3 {
+      color: var(--text-primary);
+    }
+
+    .col-after h3 {
+      color: #ffffff;
+    }
+
+    .compare-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .compare-col ul li {
+      font-size: 16px;
+      line-height: 1.5;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .col-before ul li {
+      color: var(--text-secondary);
+    }
+
+    .col-after ul li {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .compare-col ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .col-before ul li::before {
+      background: #ccc;
+    }
+
+    .col-after ul li::before {
+      background: var(--accent);
+    }
+
+    /* ========================================
+       SLIDE 6 — FLOW / STEPS
+    ======================================== */
+    .flow-container {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      width: 100%;
+      max-width: 1100px;
+      margin-top: 40px;
+    }
+
+    .flow-step {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--accent);
+      border-radius: 2px 2px 8px 8px;
+      padding: 28px 20px;
+      text-align: center;
+      position: relative;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .flow-step:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .flow-step .step-num {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+    }
+
+    .flow-step .step-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .flow-step .step-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .flow-arrow {
+      font-size: 22px;
+      color: var(--border);
+      flex-shrink: 0;
+      font-weight: 300;
+    }
+
+    /* ========================================
+       SLIDE 7 — CARDS (MAGAZINE STYLE)
+    ======================================== */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+      max-width: 1000px;
+      margin-top: 36px;
+    }
+
+    .mag-card {
+      background: var(--bg-light);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--accent);
+      border-radius: 2px 2px 8px 8px;
+      padding: 32px 24px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .mag-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .mag-card .card-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .mag-card h3 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .mag-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .mag-card .card-tag {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 3px;
+      background: rgba(230, 57, 70, 0.08);
+      color: var(--accent);
+    }
+
+    /* ========================================
+       SLIDE 8 — BAR CHART
+    ======================================== */
+    .chart-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 28px;
+      height: 260px;
+      width: 100%;
+      max-width: 800px;
+      margin-top: 44px;
+      padding-bottom: 40px;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+
+    .chart-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-bar {
+      width: 100%;
+      max-width: 56px;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      transition: transform 0.3s ease;
+      min-height: 8px;
+    }
+
+    .chart-bar:hover {
+      transform: scaleY(1.03);
+      transform-origin: bottom;
+    }
+
+    .chart-bar .bar-val {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .chart-bar-group .bar-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .bar-color-1 { background: var(--accent); }
+    .bar-color-2 { background: #e6646e; }
+    .bar-color-3 { background: #111111; }
+    .bar-color-4 { background: #444444; }
+    .bar-color-5 { background: #888888; }
+    .bar-color-6 { background: var(--accent); }
+
+    /* ========================================
+       SLIDE 9 — CODE BLOCK
+    ======================================== */
+    .code-wrapper {
+      width: 100%;
+      max-width: 800px;
+      margin-top: 28px;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      background: #2d2d2d;
+      border-radius: 8px 8px 0 0;
+      border: 1px solid #3a3a3a;
+      border-bottom: none;
+    }
+
+    .code-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .code-dot.red    { background: #FF5F57; }
+    .code-dot.yellow { background: #FFBD2E; }
+    .code-dot.green  { background: #28CA42; }
+
+    .code-header .code-filename {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-left: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .code-wrapper pre {
+      margin: 0;
+      border-radius: 0 0 8px 8px;
+      background: var(--code-bg) !important;
+      border: 1px solid #3a3a3a;
+      border-top: none;
+      padding: 24px 24px !important;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+
+    .code-wrapper pre code {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: 14px !important;
+      line-height: 1.7 !important;
+    }
+
+    /* ========================================
+       SLIDE 10 — IMAGE PLACEHOLDER (FULL-BLEED)
+    ======================================== */
+    .img-hero {
+      width: 100%;
+      max-width: 960px;
+      height: 420px;
+      border-radius: 8px;
+      background: var(--bg-light);
+      border: 2px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 28px;
+      position: relative;
+    }
+
+    .img-hero .ph-icon {
+      font-size: 56px;
+      opacity: 0.3;
+    }
+
+    .img-hero .ph-text {
+      font-size: 18px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .img-hero .ph-size {
+      font-size: 13px;
+      color: #bbb;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .img-caption {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ========================================
+       SLIDE 11 — CLOSING
+    ======================================== */
+    .closing-slide {
+      gap: 16px;
+    }
+
+    .closing-slide .closing-title {
+      font-size: 100px;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .closing-slide .closing-title .accent-dot {
+      color: var(--accent);
+    }
+
+    .closing-slide .closing-sub {
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    .closing-links {
+      display: flex;
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .closing-link {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(230, 57, 70, 0.25);
+      padding-bottom: 2px;
+      transition: border-color 0.3s ease;
+    }
+
+    .closing-link:hover {
+      border-color: var(--accent);
+    }
+
+    /* ========================================
+       PRINT / PDF EXPORT
+    ======================================== */
+    @media print {
+      html, body {
+        width: 100%;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+      }
+
+      .progress-bar,
+      .slide-counter,
+      .hint,
+      .fullscreen-btn,
+      .notes-panel {
+        display: none !important;
+      }
+
+      .deck {
+        width: 100%;
+        height: auto;
+      }
+
+      .slide {
+        position: relative;
+        opacity: 1 !important;
+        visibility: visible !important;
+        page-break-after: always;
+        page-break-inside: avoid;
+        width: 100%;
+        height: 100vh;
+        padding: 60px 80px;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .slide .a {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .title-slide {
+        padding: 0;
+      }
+
+      .slide-white {
+        background: #fff !important;
+        color: #111 !important;
+      }
+
+      .slide-light {
+        background: #f8f8f8 !important;
+        color: #111 !important;
+      }
+
+      .slide-dark {
+        background: #111 !important;
+        color: #fff !important;
+      }
+
+      .slide-black {
+        background: #000 !important;
+        color: #fff !important;
+      }
+
+      .slide-accent {
+        background: #e63946 !important;
+        color: #fff !important;
+      }
+    }
+
+    /* ========================================
+       RESPONSIVE
+    ======================================== */
+    @media (max-width: 900px) {
+      .slide {
+        padding: 48px 36px;
+      }
+
+      .xl { font-size: 56px; }
+      .lg { font-size: 38px; }
+      .md { font-size: 26px; }
+      .sm { font-size: 17px; }
+
+      .title-slide {
+        flex-direction: column;
+      }
+
+      .title-left {
+        padding: 48px 36px;
+        flex: none;
+      }
+
+      .title-left .title-xl {
+        font-size: 48px;
+      }
+
+      .title-right {
+        width: 100%;
+        min-width: auto;
+        height: 180px;
+      }
+
+      .title-right .hero-symbol {
+        font-size: 100px;
+      }
+
+      .closing-slide .closing-title { font-size: 60px; }
+
+      .compare-grid  { grid-template-columns: 1fr; gap: 20px; }
+      .cards-grid    { grid-template-columns: 1fr; }
+      .content-split { flex-direction: column; gap: 32px; }
+      .content-headline { flex: none; }
+      .content-headline h2 { font-size: 36px; }
+
+      .flow-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+
+      .chart-bar {
+        max-width: 36px;
+      }
+
+      .img-hero {
+        height: 240px;
+      }
+
+      .quote-editorial .quote-text {
+        font-size: 28px;
+      }
+
+      .quote-editorial .quote-mark-large {
+        font-size: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- Slide Counter -->
+  <div class="slide-counter" id="counter"></div>
+
+  <!-- Keyboard Hints -->
+  <div class="hint" id="hint">
+    <kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate
+    <kbd>F</kbd> fullscreen
+    <kbd>S</kbd> notes
+  </div>
+
+  <!-- Fullscreen Button -->
+  <button class="fullscreen-btn" id="fs-btn" onclick="toggleFullscreen()">&#x26F6;</button>
+
+  <!-- ============================================================
+       SLIDE DECK
+  ============================================================ -->
+  <div class="deck" id="deck">
+
+    <!-- ======================== SLIDE 1: TITLE (ASYMMETRIC) ======================== -->
+    <div class="slide slide-white active title-slide" data-notes="Opening slide. Introduce the topic with a bold editorial headline. Let the asymmetric layout and large red block make a strong visual first impression before advancing.">
+      <div class="title-left">
+        <span class="a category-tag">Editorial</span>
+        <h1 class="a title-xl">Make<br>Slide</h1>
+        <p class="a title-sub">Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.</p>
+        <p class="a title-meta">Vol. 08 &mdash; Creative Showcase</p>
+      </div>
+      <div class="title-right">
+        <span class="hero-symbol">Mg</span>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 2: AGENDA ======================== -->
+    <div class="slide slide-white" data-notes="Walk the audience through the agenda. Keep the overview brief and highlight which section matters most for this audience.">
+      <h2 class="a lg mb-2">Contents</h2>
+      <ol class="a agenda-list">
+        <li class="a"><span class="num">01</span> Vision &amp; Conceptus</li>
+        <li class="a"><span class="num">02</span> Architectura Principalis</li>
+        <li class="a"><span class="num">03</span> Typographia &amp; Layout</li>
+        <li class="a"><span class="num">04</span> Comparatio Methodorum</li>
+        <li class="a"><span class="num">05</span> Processus &amp; Gradus</li>
+        <li class="a"><span class="num">06</span> Demonstratio Visuale</li>
+      </ol>
+    </div>
+
+    <!-- ======================== SLIDE 3: CONTENT (SPLIT LAYOUT) ======================== -->
+    <div class="slide slide-white" data-notes="This content slide uses a split layout to create editorial contrast. The heavy headline on the left draws the eye, while the body text on the right provides detail.">
+      <div class="a content-split">
+        <div class="content-headline">
+          <h2>Design<br>Principia<br>Fundamenta</h2>
+          <div class="accent-line"></div>
+        </div>
+        <div class="content-body">
+          <p>Cras mattis consectetur purus sit amet fermentum. Donec sed odio dui. Maecenas faucibus mollis interdum.</p>
+          <ul>
+            <li>Nullam quis risus eget urna mollis ornare vel eu leo</li>
+            <li>Aenean lacinia bibendum nulla sed consectetur</li>
+            <li>Vestibulum id ligula porta felis euismod semper</li>
+            <li>Integer posuere erat a ante venenatis dapibus</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 4: QUOTE ======================== -->
+    <div class="slide slide-white" data-notes="Pause on this slide for a moment. Let the quote sink in. The thin font weight and large quote marks create a luxurious editorial feel.">
+      <div class="a quote-editorial">
+        <div class="quote-mark-large">&ldquo;</div>
+        <p class="a quote-text">Simplicitas est <em>ultima</em> forma sophisticationis. Omnia superflua removenda sunt.</p>
+        <div class="a quote-rule"></div>
+        <p class="a quote-attr">Marcus Aurelius</p>
+        <p class="a quote-role">Imperator Romanus, 161&ndash;180 AD</p>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 5: COMPARISON ======================== -->
+    <div class="slide slide-light" data-notes="Highlight the contrast between the two approaches. The Before column uses muted styling while the After column uses dark background to show the preferred option.">
+      <h2 class="a lg text-center mb-2">Before &amp; After</h2>
+      <div class="a compare-grid">
+        <div class="a compare-col col-before">
+          <span class="compare-label">Before</span>
+          <h3>Methodus Antiqua</h3>
+          <ul>
+            <li>Processus manualis cum instrumentis multiplicibus</li>
+            <li>Formae binarii quae versionem impediunt</li>
+            <li>Complexitas inutilis in functionibus</li>
+            <li>Collaboratio per instrumenta proprietaria</li>
+          </ul>
+        </div>
+        <div class="a compare-col col-after">
+          <span class="compare-label">After</span>
+          <h3>Methodus Nova</h3>
+          <ul>
+            <li>Textus simplex in repositorio tuo</li>
+            <li>Differentia amicabilis per Git</li>
+            <li>Functiones selectae, curva nulla</li>
+            <li>Standardae apertae, ubique operantur</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 6: FLOW / STEPS ======================== -->
+    <div class="slide slide-light" data-notes="Walk through each step of the workflow. The bold red top-border on each step draws the eye. Emphasize that the entire process takes minutes, not hours.">
+      <h2 class="a lg text-center">Processus</h2>
+      <p class="a sm text-center text-muted mb-1">Quattuor gradus ad perfectionem</p>
+      <div class="a flow-container">
+        <div class="a flow-step">
+          <div class="step-num">01</div>
+          <div class="step-title">Scribe</div>
+          <div class="step-desc">Compone materiam tuam in HTML vel Markdown</div>
+        </div>
+        <span class="a flow-arrow">&rarr;</span>
+        <div class="a flow-step">
+          <div class="step-num">02</div>
+          <div class="step-title">Stylum</div>
+          <div class="step-desc">Elige thema aut variabiles CSS muta</div>
+        </div>
+        <span class="a flow-arrow">&rarr;</span>
+        <div class="a flow-step">
+          <div class="step-num">03</div>
+          <div class="step-title">Praesenta</div>
+          <div class="step-desc">Aperi in quovis navigatro et praesentationem fac</div>
+        </div>
+        <span class="a flow-arrow">&rarr;</span>
+        <div class="a flow-step">
+          <div class="step-num">04</div>
+          <div class="step-title">Distribue</div>
+          <div class="step-desc">Exporta ad PDF vel deploy ut paginam staticam</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 7: CARDS ======================== -->
+    <div class="slide slide-white" data-notes="Each card represents a core feature. The bold top-border accent and category tag labels create the magazine section feel. Hover shows the lift effect.">
+      <h2 class="a lg text-center mb-1">Proprietates</h2>
+      <p class="a sm text-center text-secondary">Omnia necessaria, nihil superfluum.</p>
+      <div class="a cards-grid">
+        <div class="a mag-card">
+          <span class="card-icon">&#x2328;</span>
+          <h3>Keyboard First</h3>
+          <p>Naviga cum sagittis, commuta fullscreen, accede notas — omnia ex tastatura.</p>
+          <span class="card-tag">Productivitas</span>
+        </div>
+        <div class="a mag-card">
+          <span class="card-icon">&#x1F3A8;</span>
+          <h3>Themata</h3>
+          <p>Muta inter decem themata cum una mutatione classium. Quisque unicus.</p>
+          <span class="card-tag">Design</span>
+        </div>
+        <div class="a mag-card">
+          <span class="card-icon">&#x26A1;</span>
+          <h3>Zero Build</h3>
+          <p>Nullae dependentiae, nullae constructiones. Unus fasciculus HTML sufficit.</p>
+          <span class="card-tag">Simplicitas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 8: DATA / BAR CHART ======================== -->
+    <div class="slide slide-white" data-notes="Use this data visualization to show growth trends. The red and dark bars match the magazine color palette. Call out the 5x growth from Q1 to Q6.">
+      <h2 class="a lg text-center">Incrementum</h2>
+      <p class="a sm text-center text-secondary">Usores activi menstrui (milia)</p>
+      <div class="a chart-container">
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-color-1" style="height: 20%;">
+            <span class="bar-val">2.4k</span>
+          </div>
+          <span class="bar-label">Q1</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-color-2" style="height: 34%;">
+            <span class="bar-val">4.1k</span>
+          </div>
+          <span class="bar-label">Q2</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-color-3" style="height: 48%;">
+            <span class="bar-val">5.8k</span>
+          </div>
+          <span class="bar-label">Q3</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-color-4" style="height: 58%;">
+            <span class="bar-val">7.2k</span>
+          </div>
+          <span class="bar-label">Q4</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-color-5" style="height: 74%;">
+            <span class="bar-val">9.6k</span>
+          </div>
+          <span class="bar-label">Q5</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-color-6" style="height: 94%;">
+            <span class="bar-val">12.8k</span>
+          </div>
+          <span class="bar-label">Q6</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 9: CODE BLOCK ======================== -->
+    <div class="slide slide-white" data-notes="Show real code for technical audiences. The dark code window with macOS-style dots contrasts well against the white magazine background. Walk through the key class methods.">
+      <h2 class="a lg text-center">Codex</h2>
+      <p class="a sm text-center text-secondary mb-1">Simplex, legibilis, extensibilis</p>
+      <div class="a code-wrapper">
+        <div class="code-header">
+          <span class="code-dot red"></span>
+          <span class="code-dot yellow"></span>
+          <span class="code-dot green"></span>
+          <span class="code-filename">slide-engine.js</span>
+        </div>
+        <pre><code class="language-javascript">class SlideEngine {
+  constructor(deckSelector) {
+    this.deck = document.querySelector(deckSelector);
+    this.slides = [...this.deck.children];
+    this.current = 0;
+    this.total = this.slides.length;
+    this.bindEvents();
+  }
+
+  navigate(direction) {
+    const next = this.current + direction;
+    if (next < 0 || next >= this.total) return;
+
+    this.slides[this.current].classList.remove('active');
+    this.current = next;
+    this.slides[this.current].classList.add('active');
+
+    this.updateProgress();
+    this.updateNotes();
+  }
+
+  updateProgress() {
+    const pct = ((this.current + 1) / this.total) * 100;
+    document.getElementById('progress')
+      .style.width = pct + '%';
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 10: IMAGE PLACEHOLDER ======================== -->
+    <div class="slide slide-white" data-notes="This slide is designed for large hero images. Replace the placeholder with a high-resolution photograph, product shot, or full-bleed visual. The magazine theme emphasizes bold visual storytelling.">
+      <h2 class="a lg text-center">Imago Principalis</h2>
+      <p class="a sm text-center text-secondary">Substitue cum imagine propria vel screenshot</p>
+      <div class="a img-hero">
+        <span class="ph-icon">&#x1F5BC;</span>
+        <span class="ph-text">Hero Image Placeholder</span>
+        <span class="ph-size">1920 &times; 1080 recommended</span>
+      </div>
+      <p class="a img-caption">Fig. 1 &mdash; Descriptio imaginis hic ponitur</p>
+    </div>
+
+    <!-- ======================== SLIDE 11: CLOSING ======================== -->
+    <div class="slide slide-white closing-slide" data-notes="Final slide. Thank the audience, pause for a moment, then invite questions. Share contact links for follow-up conversations.">
+      <h1 class="a closing-title">Gratias<span class="accent-dot">.</span></h1>
+      <p class="a closing-sub">Quaestiones, sententiae et ideae grate accipiuntur.</p>
+      <div class="a closing-links">
+        <a class="closing-link" href="#">nomen@exemplum.com</a>
+        <a class="closing-link" href="#">@nomen</a>
+        <a class="closing-link" href="#">nomen.dev/slides</a>
+      </div>
+    </div>
+
+  </div>
+  <!-- END DECK -->
+
+  <!-- Speaker Notes Panel -->
+  <div class="notes-panel" id="notes-panel">
+    <div class="notes-label">Speaker Notes</div>
+    <div id="notes-content">Press <strong>S</strong> to toggle speaker notes.</div>
+  </div>
+
+  <!-- Prism.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ========================================
+         STATE
+      ======================================== */
+      var deck = document.getElementById('deck');
+      var slides = Array.from(deck.querySelectorAll('.slide'));
+      var total = slides.length;
+      var current = 0;
+      var notesVisible = false;
+
+      var progressBar = document.getElementById('progress');
+      var counter = document.getElementById('counter');
+      var notesPanel = document.getElementById('notes-panel');
+      var notesContent = document.getElementById('notes-content');
+      var hintEl = document.getElementById('hint');
+      var fsBtn = document.getElementById('fs-btn');
+
+      /* ========================================
+         HASH NAVIGATION
+      ======================================== */
+      function readHash() {
+        var hash = window.location.hash;
+        if (hash && /^#\d+$/.test(hash)) {
+          var idx = parseInt(hash.substring(1), 10) - 1;
+          if (idx >= 0 && idx < total) {
+            slides[current].classList.remove('active');
+            current = idx;
+            slides[current].classList.add('active');
+          }
+        }
+      }
+
+      function writeHash() {
+        history.replaceState(null, '', '#' + (current + 1));
+      }
+
+      /* ========================================
+         UI UPDATES
+      ======================================== */
+      function updateUI() {
+        /* Progress bar */
+        var pct = ((current + 1) / total) * 100;
+        progressBar.style.width = pct + '%';
+
+        /* Counter */
+        counter.textContent = (current + 1) + ' / ' + total;
+
+        /* Speaker notes */
+        var noteText = slides[current].getAttribute('data-notes') || 'No notes for this slide.';
+        notesContent.textContent = noteText;
+
+        /* Dark-slide detection for overlay UI */
+        var isDark = slides[current].classList.contains('slide-dark') || slides[current].classList.contains('slide-black') || slides[current].classList.contains('slide-accent');
+        counter.classList.toggle('on-dark', isDark);
+        hintEl.classList.toggle('on-dark', isDark);
+        fsBtn.classList.toggle('on-dark', isDark);
+
+        /* Hash */
+        writeHash();
+      }
+
+      /* ========================================
+         NAVIGATION
+      ======================================== */
+      function goTo(index) {
+        if (index < 0 || index >= total || index === current) return;
+        slides[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+        updateUI();
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      /* ========================================
+         KEYBOARD
+      ======================================== */
+      document.addEventListener('keydown', function (e) {
+        /* Ignore when typing in inputs */
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+            e.preventDefault();
+            next();
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            e.preventDefault();
+            prev();
+            break;
+          case ' ':
+            e.preventDefault();
+            if (e.shiftKey) { prev(); } else { next(); }
+            break;
+          case 'Home':
+            e.preventDefault();
+            goTo(0);
+            break;
+          case 'End':
+            e.preventDefault();
+            goTo(total - 1);
+            break;
+          case 'f':
+          case 'F':
+            e.preventDefault();
+            toggleFullscreen();
+            break;
+          case 's':
+          case 'S':
+            e.preventDefault();
+            toggleNotes();
+            break;
+        }
+      });
+
+      /* ========================================
+         CLICK NAVIGATION
+      ======================================== */
+      deck.addEventListener('click', function (e) {
+        /* Don't navigate when clicking interactive elements */
+        if (e.target.closest('a, button, code, pre, .mag-card')) return;
+        var rect = deck.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        if (x > rect.width / 3) {
+          next();
+        } else {
+          prev();
+        }
+      });
+
+      /* ========================================
+         TOUCH / SWIPE
+      ======================================== */
+      var touchStartX = 0;
+      var touchStartY = 0;
+      var touchStartTime = 0;
+
+      deck.addEventListener('touchstart', function (e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+      }, { passive: true });
+
+      deck.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        var dy = e.changedTouches[0].clientY - touchStartY;
+        var dt = Date.now() - touchStartTime;
+
+        /* Ignore slow or short swipes, or vertical gestures */
+        if (dt > 500) return;
+        if (Math.abs(dx) < 50) return;
+        if (Math.abs(dy) > Math.abs(dx)) return;
+
+        if (dx < 0) {
+          next();
+        } else {
+          prev();
+        }
+      }, { passive: true });
+
+      /* ========================================
+         FULLSCREEN
+      ======================================== */
+      window.toggleFullscreen = function () {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(function () {});
+        } else {
+          document.exitFullscreen().catch(function () {});
+        }
+      };
+
+      /* ========================================
+         SPEAKER NOTES
+      ======================================== */
+      function toggleNotes() {
+        notesVisible = !notesVisible;
+        notesPanel.classList.toggle('visible', notesVisible);
+      }
+
+      window.toggleNotes = toggleNotes;
+
+      /* ========================================
+         HASH CHANGE LISTENER
+      ======================================== */
+      window.addEventListener('hashchange', function () {
+        readHash();
+        updateUI();
+      });
+
+      /* ========================================
+         INIT
+      ======================================== */
+      readHash();
+      updateUI();
+
+      /* Re-run Prism highlighting after load */
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAll();
+      }
+
+    })();
+  </script>
+</body>
+</html>

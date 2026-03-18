@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playful — make-slide Reference</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+  <style>
+    /* ========================================
+       RESET
+    ======================================== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #fef7f0;
+      font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ========================================
+       CSS VARIABLES
+    ======================================== */
+    :root {
+      --bg: #fef7f0;
+      --surface: #ffffff;
+      --text-primary: #2d2d2d;
+      --text-secondary: #777777;
+      --accent-coral: #ff6b6b;
+      --accent-mint: #51cf66;
+      --accent-sky: #74c0fc;
+      --accent-lavender: #cc5de8;
+      --accent-yellow: #ffd43b;
+      --border: #f0e0d0;
+      --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --font-code: 'JetBrains Mono', monospace;
+    }
+
+    /* ========================================
+       PROGRESS BAR
+    ======================================== */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-coral), var(--accent-yellow), var(--accent-mint), var(--accent-sky), var(--accent-lavender));
+      background-size: 400% 100%;
+      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 1000;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* ========================================
+       SLIDE COUNTER
+    ======================================== */
+    .slide-counter {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      z-index: 900;
+      background: var(--surface);
+      padding: 6px 16px;
+      border-radius: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+    }
+
+    /* ========================================
+       HINTS
+    ======================================== */
+    .hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--text-secondary);
+      z-index: 900;
+      display: flex;
+      gap: 14px;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      background: var(--surface);
+      padding: 6px 18px;
+      border-radius: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+    }
+
+    .hint:hover {
+      opacity: 1;
+    }
+
+    .hint kbd {
+      display: inline-block;
+      padding: 2px 7px;
+      font-size: 11px;
+      font-family: var(--font-code);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-weight: 600;
+      color: var(--accent-coral);
+    }
+
+    /* ========================================
+       FULLSCREEN BUTTON
+    ======================================== */
+    .fullscreen-btn {
+      position: fixed;
+      bottom: 24px;
+      left: 28px;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 18px;
+      cursor: pointer;
+      z-index: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .fullscreen-btn:hover {
+      transform: scale(1.15) rotate(5deg);
+      background: var(--accent-coral);
+      color: #fff;
+      border-color: var(--accent-coral);
+    }
+
+    /* ========================================
+       DECK / SLIDES
+    ======================================== */
+    .deck {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 80px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease;
+      background: var(--bg);
+      color: var(--text-primary);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ========================================
+       STAGGER ANIMATIONS (BOUNCY)
+    ======================================== */
+    @keyframes staggerIn {
+      0% { opacity: 0; transform: translateY(24px) scale(0.96); }
+      60% { transform: translateY(-4px) scale(1.01); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .slide.active .a {
+      animation: staggerIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .slide.active .a:nth-child(1) { animation-delay: 0.05s; }
+    .slide.active .a:nth-child(2) { animation-delay: 0.12s; }
+    .slide.active .a:nth-child(3) { animation-delay: 0.19s; }
+    .slide.active .a:nth-child(4) { animation-delay: 0.26s; }
+    .slide.active .a:nth-child(5) { animation-delay: 0.33s; }
+    .slide.active .a:nth-child(6) { animation-delay: 0.40s; }
+    .slide.active .a:nth-child(7) { animation-delay: 0.47s; }
+    .slide.active .a:nth-child(8) { animation-delay: 0.54s; }
+    .slide.active .a:nth-child(9) { animation-delay: 0.61s; }
+    .slide.active .a:nth-child(10) { animation-delay: 0.68s; }
+
+    /* ========================================
+       TYPOGRAPHY UTILITY
+    ======================================== */
+    .xl {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -2px;
+    }
+
+    .lg {
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -1px;
+    }
+
+    .md {
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .sm {
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .text-center { text-align: center; }
+    .text-secondary { color: var(--text-secondary); }
+
+    .mb-1 { margin-bottom: 12px; }
+    .mb-2 { margin-bottom: 24px; }
+    .mb-3 { margin-bottom: 36px; }
+
+    /* ========================================
+       SLIDE 1 — TITLE
+    ======================================== */
+    .title-slide {
+      gap: 16px;
+      text-align: center;
+    }
+
+    .title-slide .emoji-accent {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .title-slide .xl {
+      background: linear-gradient(135deg, var(--accent-coral), var(--accent-lavender), var(--accent-sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .title-slide .subtitle {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    .title-slide .tag-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .pill-tag {
+      display: inline-block;
+      padding: 6px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 20px;
+      background: rgba(255, 107, 107, 0.12);
+      color: var(--accent-coral);
+    }
+
+    .pill-tag.mint { background: rgba(81, 207, 102, 0.12); color: #37a34d; }
+    .pill-tag.sky { background: rgba(116, 192, 252, 0.12); color: #3a8fd4; }
+    .pill-tag.lavender { background: rgba(204, 93, 232, 0.12); color: #a844c4; }
+    .pill-tag.yellow { background: rgba(255, 212, 59, 0.15); color: #b8960a; }
+
+    /* ========================================
+       SLIDE 2 — AGENDA / TOC
+    ======================================== */
+    .agenda-list {
+      list-style: none;
+      width: 100%;
+      max-width: 640px;
+      margin-top: 20px;
+    }
+
+    .agenda-list li {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+      border-radius: var(--radius-md);
+      transition: background 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .agenda-list li:hover {
+      background: rgba(255, 107, 107, 0.06);
+      transform: translateX(6px);
+    }
+
+    .agenda-list li .agenda-emoji {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .agenda-list li .agenda-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .agenda-list li:nth-child(1) .agenda-num { background: rgba(255, 107, 107, 0.15); color: var(--accent-coral); }
+    .agenda-list li:nth-child(2) .agenda-num { background: rgba(255, 212, 59, 0.18); color: #b8960a; }
+    .agenda-list li:nth-child(3) .agenda-num { background: rgba(81, 207, 102, 0.15); color: #37a34d; }
+    .agenda-list li:nth-child(4) .agenda-num { background: rgba(116, 192, 252, 0.15); color: #3a8fd4; }
+    .agenda-list li:nth-child(5) .agenda-num { background: rgba(204, 93, 232, 0.15); color: #a844c4; }
+    .agenda-list li:nth-child(6) .agenda-num { background: rgba(255, 107, 107, 0.15); color: var(--accent-coral); }
+
+    /* ========================================
+       SLIDE 3 — CONTENT (BULLET POINTS)
+    ======================================== */
+    .content-body {
+      width: 100%;
+      max-width: 720px;
+      text-align: left;
+    }
+
+    .content-body p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .content-body ul {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .content-body ul li {
+      font-size: 19px;
+      line-height: 1.6;
+      padding: 10px 0;
+      padding-left: 32px;
+      position: relative;
+      color: var(--text-primary);
+    }
+
+    .content-body ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 18px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .content-body ul li:nth-child(1)::before { background: var(--accent-coral); }
+    .content-body ul li:nth-child(2)::before { background: var(--accent-yellow); }
+    .content-body ul li:nth-child(3)::before { background: var(--accent-mint); }
+    .content-body ul li:nth-child(4)::before { background: var(--accent-sky); }
+    .content-body ul li:nth-child(5)::before { background: var(--accent-lavender); }
+
+    /* ========================================
+       SLIDE 4 — QUOTE
+    ======================================== */
+    .quote-block {
+      text-align: center;
+      max-width: 700px;
+    }
+
+    .quote-mark {
+      font-size: 80px;
+      line-height: 1;
+      color: var(--accent-coral);
+      font-weight: 800;
+      opacity: 0.5;
+    }
+
+    .quote-text {
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text-primary);
+      margin: 8px 0 24px 0;
+    }
+
+    .quote-attr {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .quote-attr span {
+      color: var(--accent-lavender);
+      font-weight: 600;
+    }
+
+    /* ========================================
+       SLIDE 5 — COMPARISON (BEFORE / AFTER)
+    ======================================== */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      width: 100%;
+      max-width: 880px;
+      margin-top: 24px;
+    }
+
+    .compare-col {
+      padding: 32px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+    }
+
+    .compare-col h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .compare-col h3 .col-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .col-before {
+      background: rgba(255, 107, 107, 0.04);
+      border-color: rgba(255, 107, 107, 0.2);
+    }
+
+    .col-before h3 .col-badge {
+      background: rgba(255, 107, 107, 0.12);
+      color: var(--accent-coral);
+    }
+
+    .col-after {
+      background: rgba(81, 207, 102, 0.04);
+      border-color: rgba(81, 207, 102, 0.2);
+    }
+
+    .col-after h3 .col-badge {
+      background: rgba(81, 207, 102, 0.12);
+      color: #37a34d;
+    }
+
+    .compare-col ul {
+      list-style: none;
+    }
+
+    .compare-col ul li {
+      font-size: 16px;
+      line-height: 1.6;
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+      color: var(--text-primary);
+    }
+
+    .col-before ul li::before {
+      content: '\2717';
+      position: absolute;
+      left: 0;
+      color: var(--accent-coral);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .col-after ul li::before {
+      content: '\2713';
+      position: absolute;
+      left: 0;
+      color: var(--accent-mint);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* ========================================
+       SLIDE 6 — FLOW / STEPS
+    ======================================== */
+    .flow-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 40px;
+      width: 100%;
+      max-width: 920px;
+      justify-content: center;
+    }
+
+    .flow-step {
+      flex: 1;
+      text-align: center;
+      padding: 28px 16px;
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    }
+
+    .flow-step:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    .flow-step .step-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin: 0 auto 14px;
+    }
+
+    .flow-step:nth-child(1) .step-circle { background: rgba(255, 107, 107, 0.15); }
+    .flow-step:nth-child(3) .step-circle { background: rgba(255, 212, 59, 0.18); }
+    .flow-step:nth-child(5) .step-circle { background: rgba(81, 207, 102, 0.15); }
+    .flow-step:nth-child(7) .step-circle { background: rgba(116, 192, 252, 0.15); }
+
+    .flow-step .step-num {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .flow-step .step-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .flow-step .step-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .flow-arrow {
+      font-size: 24px;
+      color: var(--border);
+      flex-shrink: 0;
+      font-weight: 300;
+    }
+
+    /* ========================================
+       SLIDE 7 — FEATURE CARDS
+    ======================================== */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+      max-width: 880px;
+      margin-top: 32px;
+    }
+
+    .fun-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    }
+
+    .fun-card:hover {
+      transform: translateY(-6px) rotate(-1deg);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.08);
+    }
+
+    .fun-card .card-emoji {
+      font-size: 44px;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .fun-card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+
+    .fun-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .fun-card .card-tag {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 20px;
+    }
+
+    .fun-card:nth-child(1) .card-tag { background: rgba(255, 107, 107, 0.12); color: var(--accent-coral); }
+    .fun-card:nth-child(2) .card-tag { background: rgba(81, 207, 102, 0.12); color: #37a34d; }
+    .fun-card:nth-child(3) .card-tag { background: rgba(116, 192, 252, 0.12); color: #3a8fd4; }
+
+    /* ========================================
+       SLIDE 8 — BAR CHART
+    ======================================== */
+    .chart-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      height: 260px;
+      width: 100%;
+      max-width: 760px;
+      margin-top: 40px;
+      padding-bottom: 40px;
+      border-bottom: 2px solid var(--border);
+      position: relative;
+    }
+
+    .chart-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-bar {
+      width: 100%;
+      max-width: 56px;
+      border-radius: 14px 14px 6px 6px;
+      position: relative;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      min-height: 8px;
+    }
+
+    .chart-bar:hover {
+      transform: scaleY(1.04);
+      transform-origin: bottom;
+    }
+
+    .chart-bar .bar-val {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .chart-bar-group .bar-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .bar-coral { background: var(--accent-coral); }
+    .bar-yellow { background: var(--accent-yellow); }
+    .bar-mint { background: var(--accent-mint); }
+    .bar-sky { background: var(--accent-sky); }
+    .bar-lavender { background: var(--accent-lavender); }
+    .bar-orange { background: #ffa94d; }
+
+    /* ========================================
+       SLIDE 9 — CODE BLOCK
+    ======================================== */
+    .code-wrapper {
+      width: 100%;
+      max-width: 760px;
+      margin-top: 28px;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      background: #fafafa;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+    }
+
+    .code-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .code-dot.red { background: var(--accent-coral); }
+    .code-dot.yellow { background: var(--accent-yellow); }
+    .code-dot.green { background: var(--accent-mint); }
+
+    .code-header .code-filename {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-left: 12px;
+      font-family: var(--font-code);
+      font-weight: 600;
+    }
+
+    .code-wrapper pre {
+      margin: 0;
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+      background: #ffffff !important;
+      border: 1px solid var(--border);
+      border-top: none;
+      padding: 24px 24px !important;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+
+    .code-wrapper pre code {
+      font-family: var(--font-code) !important;
+      font-size: 14px !important;
+      line-height: 1.7 !important;
+    }
+
+    /* ========================================
+       SLIDE 10 — IMAGE PLACEHOLDER
+    ======================================== */
+    .img-placeholder {
+      width: 680px;
+      max-width: 100%;
+      height: 380px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.06), rgba(116, 192, 252, 0.06), rgba(204, 93, 232, 0.06));
+      border: 2px dashed var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 28px;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .img-placeholder:hover {
+      border-color: var(--accent-sky);
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.08), rgba(116, 192, 252, 0.08), rgba(204, 93, 232, 0.08));
+    }
+
+    .img-placeholder .ph-icon {
+      font-size: 52px;
+    }
+
+    .img-placeholder .ph-text {
+      font-size: 16px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .img-placeholder .ph-size {
+      font-size: 13px;
+      color: #bbb;
+      font-family: var(--font-code);
+    }
+
+    /* ========================================
+       SLIDE 11 — CLOSING
+    ======================================== */
+    .closing-slide {
+      gap: 16px;
+      text-align: center;
+    }
+
+    .closing-slide .closing-emoji {
+      font-size: 60px;
+      display: block;
+    }
+
+    .closing-slide .closing-title {
+      font-size: 80px;
+      font-weight: 800;
+      letter-spacing: -3px;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--accent-coral), var(--accent-lavender), var(--accent-sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .closing-slide .closing-sub {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-top: 8px;
+    }
+
+    .closing-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .closing-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 24px;
+      text-decoration: none;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    }
+
+    .closing-link-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    .closing-link-btn.coral {
+      background: rgba(255, 107, 107, 0.12);
+      color: var(--accent-coral);
+    }
+
+    .closing-link-btn.sky {
+      background: rgba(116, 192, 252, 0.12);
+      color: #3a8fd4;
+    }
+
+    .closing-link-btn.lavender {
+      background: rgba(204, 93, 232, 0.12);
+      color: #a844c4;
+    }
+
+    /* ========================================
+       SPEAKER NOTES PANEL
+    ======================================== */
+    .notes-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 2px solid var(--border);
+      padding: 20px 32px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      z-index: 950;
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-height: 200px;
+      overflow-y: auto;
+      box-shadow: 0 -4px 30px rgba(0,0,0,0.08);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .notes-panel.visible {
+      transform: translateY(0);
+    }
+
+    .notes-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-coral);
+      margin-bottom: 8px;
+    }
+
+    /* ========================================
+       RESPONSIVE
+    ======================================== */
+    @media (max-width: 900px) {
+      .slide {
+        padding: 48px 32px;
+      }
+
+      .xl { font-size: 44px; }
+      .lg { font-size: 32px; }
+      .md { font-size: 22px; }
+      .sm { font-size: 17px; }
+
+      .title-slide .xl { font-size: 48px; }
+      .closing-slide .closing-title { font-size: 56px; }
+
+      .compare-grid { grid-template-columns: 1fr; gap: 20px; }
+      .cards-grid { grid-template-columns: 1fr; }
+
+      .flow-container {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+
+      .chart-bar {
+        max-width: 36px;
+      }
+    }
+
+    /* ========================================
+       PRINT / PDF EXPORT
+    ======================================== */
+    @media print {
+      html, body {
+        width: 100%;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+      }
+
+      .progress-bar,
+      .slide-counter,
+      .hint,
+      .fullscreen-btn,
+      .notes-panel {
+        display: none !important;
+      }
+
+      .deck {
+        width: 100%;
+        height: auto;
+      }
+
+      .slide {
+        position: relative;
+        opacity: 1 !important;
+        visibility: visible !important;
+        page-break-after: always;
+        page-break-inside: avoid;
+        width: 100%;
+        height: 100vh;
+        padding: 60px 80px;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .slide .a {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- Slide Counter -->
+  <div class="slide-counter" id="counter"></div>
+
+  <!-- Keyboard Hints -->
+  <div class="hint" id="hint">
+    <kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate
+    <kbd>F</kbd> fullscreen
+    <kbd>S</kbd> notes
+  </div>
+
+  <!-- Fullscreen Button -->
+  <button class="fullscreen-btn" id="fs-btn" onclick="toggleFullscreen()">&#x26F6;</button>
+
+  <!-- ============================================================
+       SLIDE DECK
+  ============================================================ -->
+  <div class="deck" id="deck">
+
+    <!-- ======================== SLIDE 1: TITLE ======================== -->
+    <div class="slide active title-slide" data-notes="Welcome everyone to the presentation. This is a fun, playful theme perfect for workshops and casual talks. Start with energy and enthusiasm.">
+      <span class="a emoji-accent">&#127912;</span>
+      <h1 class="a xl">Presentation Title</h1>
+      <p class="a subtitle">Subtitle dolor sit amet consectetur adipiscing elit</p>
+      <div class="a tag-row">
+        <span class="pill-tag">Workshop</span>
+        <span class="pill-tag mint">Interactive</span>
+        <span class="pill-tag sky">Creative</span>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 2: AGENDA ======================== -->
+    <div class="slide" data-notes="Walk the audience through what we will cover today. Keep the overview brief and set expectations for timing.">
+      <h2 class="a lg text-center mb-2">&#128203; Agenda</h2>
+      <ul class="a agenda-list">
+        <li class="a"><span class="agenda-num">1</span><span class="agenda-emoji">&#128161;</span> Vision &amp; Core Concepts</li>
+        <li class="a"><span class="agenda-num">2</span><span class="agenda-emoji">&#127919;</span> Architecture Overview</li>
+        <li class="a"><span class="agenda-num">3</span><span class="agenda-emoji">&#128640;</span> Features &amp; Capabilities</li>
+        <li class="a"><span class="agenda-num">4</span><span class="agenda-emoji">&#128202;</span> Data &amp; Metrics</li>
+        <li class="a"><span class="agenda-num">5</span><span class="agenda-emoji">&#128187;</span> Technical Deep Dive</li>
+        <li class="a"><span class="agenda-num">6</span><span class="agenda-emoji">&#127881;</span> Summary &amp; Next Steps</li>
+      </ul>
+    </div>
+
+    <!-- ======================== SLIDE 3: CONTENT ======================== -->
+    <div class="slide" data-notes="This slide covers the main content with supporting bullet points. Elaborate on each point with examples and anecdotes from your experience.">
+      <h2 class="a lg mb-1">&#9997;&#65039; Key Principles</h2>
+      <p class="a sm text-secondary mb-2">Lorem ipsum dolor sit amet consectetur</p>
+      <div class="a content-body">
+        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat.</p>
+        <ul>
+          <li class="a">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium</li>
+          <li class="a">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit</li>
+          <li class="a">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet</li>
+          <li class="a">Ut enim ad minima veniam quis nostrum exercitationem ullam corporis</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 4: QUOTE ======================== -->
+    <div class="slide" data-notes="Pause here to let the quote sink in. This sets the philosophical foundation for the rest of the presentation. Ask the audience what it means to them.">
+      <div class="a quote-block">
+        <div class="a quote-mark">&#10077;</div>
+        <p class="a quote-text">Simplicitas est ultimum sophisticationis. Omnia geniale sunt simplicia.</p>
+        <p class="a quote-attr">&mdash; <span>Auctor Notus</span></p>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 5: COMPARISON ======================== -->
+    <div class="slide" data-notes="Contrast the traditional approach with the modern one. Emphasize pain points on the left and the improvements on the right. Ask participants which column resonates more.">
+      <h2 class="a lg text-center mb-2">&#9878;&#65039; Before vs. After</h2>
+      <div class="a compare-grid">
+        <div class="a compare-col col-before">
+          <h3>Before <span class="col-badge">Legacy</span></h3>
+          <ul>
+            <li>Processus manualis et tardus</li>
+            <li>Dependentia a formatibus proprietariis</li>
+            <li>Collaboratio limitata inter membra</li>
+            <li>Flexibilitas nulla in designo</li>
+          </ul>
+        </div>
+        <div class="a compare-col col-after">
+          <h3>After <span class="col-badge">Modern</span></h3>
+          <ul>
+            <li>Automatizatio fluida et velox</li>
+            <li>Formatum apertum et universale</li>
+            <li>Collaboratio tempore reali</li>
+            <li>Designum flexibile et adaptabile</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 6: FLOW / STEPS ======================== -->
+    <div class="slide" data-notes="Walk through each step of the workflow sequentially. Emphasize that the entire process is designed to be simple and fun. Each step builds on the previous one.">
+      <h2 class="a lg text-center">&#127992; How It Works</h2>
+      <p class="a sm text-center text-secondary mb-1">Quattuor gradus simplices</p>
+      <div class="a flow-container">
+        <div class="a flow-step">
+          <div class="step-circle">&#128221;</div>
+          <div class="step-num">Step 01</div>
+          <div class="step-title">Scribe</div>
+          <div class="step-desc">Contentum tuum in forma simplici compone</div>
+        </div>
+        <span class="a flow-arrow">&#10132;</span>
+        <div class="a flow-step">
+          <div class="step-circle">&#127912;</div>
+          <div class="step-num">Step 02</div>
+          <div class="step-title">Stylum Elige</div>
+          <div class="step-desc">Thema et colores ad gustum tuum adapta</div>
+        </div>
+        <span class="a flow-arrow">&#10132;</span>
+        <div class="a flow-step">
+          <div class="step-circle">&#128640;</div>
+          <div class="step-num">Step 03</div>
+          <div class="step-title">Praesenta</div>
+          <div class="step-desc">In quocumque navigatro aperi et presenta</div>
+        </div>
+        <span class="a flow-arrow">&#10132;</span>
+        <div class="a flow-step">
+          <div class="step-circle">&#127881;</div>
+          <div class="step-num">Step 04</div>
+          <div class="step-title">Distribue</div>
+          <div class="step-desc">PDF exporta vel paginam staticam deploya</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 7: CARDS ======================== -->
+    <div class="slide" data-notes="Highlight three key features using the card layout. Each card has an emoji icon for visual appeal. Hover over cards to see the playful tilt animation.">
+      <h2 class="a lg text-center mb-1">&#10024; Features</h2>
+      <p class="a sm text-center text-secondary mb-2">Omnia quae necessaria sunt, nihil superfluum.</p>
+      <div class="a cards-grid">
+        <div class="a fun-card">
+          <span class="card-emoji">&#9000;&#65039;</span>
+          <h3>Navigatio Rapida</h3>
+          <p>Sagitta clavibus naviga, pleniscreenium commuta, notas oratoris accede.</p>
+          <span class="card-tag">Productivitas</span>
+        </div>
+        <div class="a fun-card">
+          <span class="card-emoji">&#127912;</span>
+          <h3>Themata Varia</h3>
+          <p>Inter obscura, clara et gradentia themata cum una classe mutatione commuta.</p>
+          <span class="card-tag">Designum</span>
+        </div>
+        <div class="a fun-card">
+          <span class="card-emoji">&#9889;</span>
+          <h3>Nulla Constructio</h3>
+          <p>Nulla fascicula, nulla dependentia. Unus fasciculus HTML sufficit ad praesentandum.</p>
+          <span class="card-tag">Simplicitas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 8: DATA / BAR CHART ======================== -->
+    <div class="slide" data-notes="Present quantitative data here. Each bar uses a different pastel color for visual variety. Point out the growth trend from left to right.">
+      <h2 class="a lg text-center">&#128200; Progressus Mensualis</h2>
+      <p class="a sm text-center text-secondary">Usores activi menstrui (in milibus)</p>
+      <div class="a chart-container">
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-coral" style="height: 20%;">
+            <span class="bar-val">2.1k</span>
+          </div>
+          <span class="bar-label">Jan</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-yellow" style="height: 35%;">
+            <span class="bar-val">3.8k</span>
+          </div>
+          <span class="bar-label">Feb</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-mint" style="height: 48%;">
+            <span class="bar-val">5.4k</span>
+          </div>
+          <span class="bar-label">Mar</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-sky" style="height: 58%;">
+            <span class="bar-val">6.9k</span>
+          </div>
+          <span class="bar-label">Apr</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-lavender" style="height: 74%;">
+            <span class="bar-val">9.1k</span>
+          </div>
+          <span class="bar-label">May</span>
+        </div>
+        <div class="chart-bar-group a">
+          <div class="chart-bar bar-orange" style="height: 92%;">
+            <span class="bar-val">12.3k</span>
+          </div>
+          <span class="bar-label">Jun</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 9: CODE BLOCK ======================== -->
+    <div class="slide" data-notes="Show real code to the audience. Walk through the key functions and explain the design decisions. The light Prism theme keeps code readable on the pastel background.">
+      <h2 class="a lg text-center">&#128187; Sub Tegmine</h2>
+      <p class="a sm text-center text-secondary mb-1">Simplex, legibilis, extensibilis</p>
+      <div class="a code-wrapper">
+        <div class="code-header">
+          <span class="code-dot red"></span>
+          <span class="code-dot yellow"></span>
+          <span class="code-dot green"></span>
+          <span class="code-filename">slide-engine.js</span>
+        </div>
+        <pre><code class="language-javascript">class SlideEngine {
+  constructor(deckSelector) {
+    this.deck = document.querySelector(deckSelector);
+    this.slides = [...this.deck.children];
+    this.current = 0;
+    this.total = this.slides.length;
+    this.bindEvents();
+  }
+
+  navigate(direction) {
+    const next = this.current + direction;
+    if (next < 0 || next >= this.total) return;
+
+    this.slides[this.current].classList.remove('active');
+    this.current = next;
+    this.slides[this.current].classList.add('active');
+
+    this.updateProgress();
+    this.updateNotes();
+  }
+
+  updateProgress() {
+    const pct = ((this.current + 1) / this.total) * 100;
+    document.getElementById('progress')
+      .style.width = pct + '%';
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 10: IMAGE PLACEHOLDER ======================== -->
+    <div class="slide" data-notes="Replace this placeholder with your own image, screenshot, or diagram. The dashed border indicates where the image should go. Recommended resolution is 1440 by 900 pixels.">
+      <h2 class="a lg text-center">&#128444;&#65039; Visual Preview</h2>
+      <p class="a sm text-center text-secondary">Imaginem tuam vel capturam scrinii hic insere</p>
+      <div class="a img-placeholder">
+        <span class="ph-icon">&#127788;&#65039;</span>
+        <span class="ph-text">Image Placeholder</span>
+        <span class="ph-size">1440 &times; 900 recommended</span>
+      </div>
+    </div>
+
+    <!-- ======================== SLIDE 11: CLOSING ======================== -->
+    <div class="slide closing-slide" data-notes="Final slide. Thank the audience warmly, invite questions, and share contact information. End with positive energy matching the playful theme.">
+      <span class="a closing-emoji">&#128079;</span>
+      <h1 class="a closing-title">Gratias Vobis!</h1>
+      <p class="a closing-sub">Quaestiones, opiniones et ideae gratiores sunt.</p>
+      <div class="a closing-links">
+        <a class="closing-link-btn coral" href="#">&#128231; nomen@exemplum.com</a>
+        <a class="closing-link-btn sky" href="#">&#127760; exemplum.dev/slides</a>
+        <a class="closing-link-btn lavender" href="#">&#128172; @nomen</a>
+      </div>
+    </div>
+
+  </div>
+  <!-- END DECK -->
+
+  <!-- Speaker Notes Panel -->
+  <div class="notes-panel" id="notes-panel">
+    <div class="notes-label">Speaker Notes</div>
+    <div id="notes-content">Press <strong>S</strong> to toggle speaker notes.</div>
+  </div>
+
+  <!-- Prism.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ========================================
+         STATE
+      ======================================== */
+      var deck = document.getElementById('deck');
+      var slides = Array.from(deck.querySelectorAll('.slide'));
+      var total = slides.length;
+      var current = 0;
+      var notesVisible = false;
+
+      var progressBar = document.getElementById('progress');
+      var counter = document.getElementById('counter');
+      var notesPanel = document.getElementById('notes-panel');
+      var notesContent = document.getElementById('notes-content');
+      var hintEl = document.getElementById('hint');
+      var fsBtn = document.getElementById('fs-btn');
+
+      /* ========================================
+         HASH NAVIGATION
+      ======================================== */
+      function readHash() {
+        var hash = window.location.hash;
+        if (hash && /^#\d+$/.test(hash)) {
+          var idx = parseInt(hash.substring(1), 10) - 1;
+          if (idx >= 0 && idx < total) {
+            slides[current].classList.remove('active');
+            current = idx;
+            slides[current].classList.add('active');
+          }
+        }
+      }
+
+      function writeHash() {
+        history.replaceState(null, '', '#' + (current + 1));
+      }
+
+      /* ========================================
+         UI UPDATES
+      ======================================== */
+      function updateUI() {
+        /* Progress bar */
+        var pct = ((current + 1) / total) * 100;
+        progressBar.style.width = pct + '%';
+
+        /* Counter */
+        counter.textContent = (current + 1) + ' / ' + total;
+
+        /* Speaker notes */
+        var noteText = slides[current].getAttribute('data-notes') || 'No notes for this slide.';
+        notesContent.textContent = noteText;
+
+        /* Hash */
+        writeHash();
+      }
+
+      /* ========================================
+         NAVIGATION
+      ======================================== */
+      function goTo(index) {
+        if (index < 0 || index >= total || index === current) return;
+        slides[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+        updateUI();
+      }
+
+      function next() { goTo(current + 1); }
+      function prev() { goTo(current - 1); }
+
+      /* ========================================
+         KEYBOARD
+      ======================================== */
+      document.addEventListener('keydown', function (e) {
+        /* Ignore when typing in inputs */
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+            e.preventDefault();
+            next();
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            e.preventDefault();
+            prev();
+            break;
+          case ' ':
+            e.preventDefault();
+            if (e.shiftKey) { prev(); } else { next(); }
+            break;
+          case 'Home':
+            e.preventDefault();
+            goTo(0);
+            break;
+          case 'End':
+            e.preventDefault();
+            goTo(total - 1);
+            break;
+          case 'f':
+          case 'F':
+            e.preventDefault();
+            toggleFullscreen();
+            break;
+          case 's':
+          case 'S':
+            e.preventDefault();
+            toggleNotes();
+            break;
+        }
+      });
+
+      /* ========================================
+         CLICK NAVIGATION (left 1/3 = prev, right 2/3 = next)
+      ======================================== */
+      deck.addEventListener('click', function (e) {
+        /* Don't navigate when clicking interactive elements */
+        if (e.target.closest('a, button, code, pre, .fun-card')) return;
+        var rect = deck.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        if (x < rect.width / 3) {
+          prev();
+        } else {
+          next();
+        }
+      });
+
+      /* ========================================
+         TOUCH / SWIPE
+      ======================================== */
+      var touchStartX = 0;
+      var touchStartY = 0;
+      var touchStartTime = 0;
+
+      deck.addEventListener('touchstart', function (e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+      }, { passive: true });
+
+      deck.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        var dy = e.changedTouches[0].clientY - touchStartY;
+        var dt = Date.now() - touchStartTime;
+
+        /* Ignore slow or short swipes, or vertical gestures */
+        if (dt > 500) return;
+        if (Math.abs(dx) < 50) return;
+        if (Math.abs(dy) > Math.abs(dx)) return;
+
+        if (dx < 0) {
+          next();
+        } else {
+          prev();
+        }
+      }, { passive: true });
+
+      /* ========================================
+         FULLSCREEN
+      ======================================== */
+      window.toggleFullscreen = function () {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(function () {});
+        } else {
+          document.exitFullscreen().catch(function () {});
+        }
+      };
+
+      /* ========================================
+         SPEAKER NOTES
+      ======================================== */
+      function toggleNotes() {
+        notesVisible = !notesVisible;
+        notesPanel.classList.toggle('visible', notesVisible);
+      }
+
+      window.toggleNotes = toggleNotes;
+
+      /* ========================================
+         HASH CHANGE LISTENER
+      ======================================== */
+      window.addEventListener('hashchange', function () {
+        readHash();
+        updateUI();
+      });
+
+      /* ========================================
+         INIT
+      ======================================== */
+      readHash();
+      updateUI();
+
+      /* Re-run Prism highlighting after load */
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAll();
+      }
+
+    })();
+  </script>
+</body>
+</html>

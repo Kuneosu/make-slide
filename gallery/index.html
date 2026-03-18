@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>make-slide Theme Gallery</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f7f8fa;
+      --text: #1a1a2e;
+      --text-secondary: #6b7280;
+      --border: #e5e7eb;
+      --card-bg: #ffffff;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+      --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+      --accent: #3b82f6;
+      --tag-bg: #f0f4ff;
+      --tag-text: #3b5998;
+      --font-body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      --radius: 12px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f1117;
+      --bg-secondary: #161822;
+      --text: #f0f0f0;
+      --text-secondary: #8b8fa3;
+      --border: #2a2d3a;
+      --card-bg: #1c1e2a;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
+      --card-shadow-hover: 0 4px 12px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.2);
+      --accent: #60a5fa;
+      --tag-bg: rgba(59, 130, 246, 0.12);
+      --tag-text: #93b4f5;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 32px 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .header-left h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .header-left h1 span {
+      color: var(--accent);
+    }
+
+    .header-left p {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    /* Header Controls */
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-toggle span {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      user-select: none;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      background: var(--border);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      border: none;
+      outline: none;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    [data-theme="dark"] .toggle-switch {
+      background: var(--accent);
+    }
+
+    [data-theme="dark"] .toggle-switch::after {
+      transform: translateX(22px);
+    }
+
+    /* Language Toggle */
+    .lang-toggle {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      letter-spacing: 0.03em;
+      font-family: var(--font-body);
+    }
+
+    .lang-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ===== Stats Bar ===== */
+    .stats-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px 32px;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .stat {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .stat strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .divider {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+    }
+
+    /* ===== Grid ===== */
+    .grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px 64px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    /* ===== Card ===== */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow-hover);
+      border-color: var(--accent);
+    }
+
+    /* Preview Box */
+    .card-preview {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-preview .preview-label {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      z-index: 1;
+    }
+
+    .card-preview .preview-sub {
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      font-size: 0.7rem;
+      opacity: 0.6;
+      z-index: 1;
+    }
+
+    /* Card Body */
+    .card-body {
+      padding: 20px 24px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-body h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .card-body p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 14px;
+      flex: 1;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 100px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      letter-spacing: 0.02em;
+    }
+
+    /* ===== Preview Themes ===== */
+
+    /* minimal-dark */
+    .preview-minimal-dark {
+      background: #0a0a0a;
+      color: #f0f0f0;
+    }
+    .preview-minimal-dark .preview-sub { color: #888; }
+
+    /* minimal-light */
+    .preview-minimal-light {
+      background: #ffffff;
+      border-bottom: 1px solid #eee;
+      color: #1a1a1a;
+    }
+    .preview-minimal-light .preview-sub { color: #888; }
+
+    /* keynote-apple */
+    .preview-keynote-apple {
+      background: linear-gradient(135deg, #000000 0%, #1a1a2e 100%);
+      color: #ffffff;
+    }
+    .preview-keynote-apple .preview-sub { color: rgba(255,255,255,0.5); }
+
+    /* corporate */
+    .preview-corporate {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+      color: #ffffff;
+    }
+    .preview-corporate .preview-label::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 3px;
+      background: #c8a45c;
+      margin: 8px auto 0;
+    }
+    .preview-corporate .preview-sub { color: rgba(255,255,255,0.5); }
+
+    /* gradient-pop */
+    .preview-gradient-pop {
+      background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #f97316 100%);
+      color: #ffffff;
+    }
+    .preview-gradient-pop .preview-sub { color: rgba(255,255,255,0.6); }
+
+    /* neon-terminal */
+    .preview-neon-terminal {
+      background: #0d1117;
+      color: #00ff41;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .preview-neon-terminal .preview-label {
+      text-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+      font-family: monospace;
+    }
+    .preview-neon-terminal .preview-sub {
+      color: #00d4ff;
+      font-family: monospace;
+    }
+
+    /* paper */
+    .preview-paper {
+      background: #f5f0e8;
+      color: #3d3929;
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+    .preview-paper .preview-label { font-family: Georgia, serif; font-style: italic; }
+    .preview-paper .preview-sub { color: #8a7f6e; font-family: Georgia, serif; }
+
+    /* magazine */
+    .preview-magazine {
+      background: #ffffff;
+      color: #111111;
+      position: relative;
+    }
+    .preview-magazine::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 35%;
+      background: #e63946;
+    }
+    .preview-magazine .preview-label {
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      font-size: 1.6rem;
+      z-index: 2;
+      margin-left: -20%;
+    }
+    .preview-magazine .preview-sub { color: #e63946; z-index: 2; }
+
+    /* data-focus */
+    .preview-data-focus {
+      background: #ffffff;
+      background-image:
+        repeating-linear-gradient(90deg, transparent, transparent 39px, #f0f0f0 39px, #f0f0f0 40px),
+        repeating-linear-gradient(0deg, transparent, transparent 39px, #f0f0f0 39px, #f0f0f0 40px);
+      color: #1a1a2e;
+    }
+    .preview-data-focus .preview-label { color: #2563eb; }
+    .preview-data-focus .preview-sub { color: #6b7280; }
+
+    /* playful */
+    .preview-playful {
+      background: #fef7f0;
+      color: #2d2d2d;
+    }
+    .preview-playful .preview-label {
+      background: linear-gradient(135deg, #ff6b6b, #cc5de8, #74c0fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .preview-playful .preview-sub { color: #ff6b6b; }
+
+    /* ===== Footer ===== */
+    .footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 32px 48px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        padding: 32px 20px 16px;
+      }
+
+      .header-left h1 {
+        font-size: 1.5rem;
+      }
+
+      .stats-bar {
+        padding: 0 20px 24px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        padding: 0 20px 48px;
+        gap: 16px;
+      }
+
+      .card-preview {
+        height: 140px;
+      }
+
+      .footer {
+        padding: 24px 20px 32px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <h1 data-i18n-html="title"><span>make-slide</span> Theme Gallery</h1>
+      <p data-i18n="subtitle">10 presentation themes designed for AI-generated slides. Click any card to preview the reference deck.</p>
+    </div>
+    <div class="header-controls">
+      <div class="theme-toggle">
+        <span>Light</span>
+        <button class="toggle-switch" id="themeToggle" aria-label="Toggle dark mode"></button>
+        <span>Dark</span>
+      </div>
+      <button class="lang-toggle" id="langToggle" aria-label="Toggle language">EN</button>
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat" data-i18n-html="stat-themes"><strong>10</strong> themes</div>
+    <div class="divider"></div>
+    <div class="stat" data-i18n-html="stat-types"><strong>11</strong> slide types each</div>
+    <div class="divider"></div>
+    <div class="stat" data-i18n="stat-standalone">Fully standalone HTML</div>
+  </div>
+
+  <!-- Theme Grid -->
+  <div class="grid">
+
+    <!-- 1. Minimal Dark -->
+    <a href="/themes/minimal-dark/reference.html" class="card">
+      <div class="card-preview preview-minimal-dark">
+        <span class="preview-label">Minimal Dark</span>
+        <span class="preview-sub">Dark + Blue accent</span>
+      </div>
+      <div class="card-body">
+        <h3>Minimal Dark</h3>
+        <p data-i18n="desc-minimal-dark">Clean dark background with crisp white typography. Minimal decoration, maximum clarity for content-focused presentations.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-tech-conference">Tech Conference</span>
+          <span class="tag" data-i18n="tag-developer-talk">Developer Talk</span>
+          <span class="tag" data-i18n="tag-meetup">Meetup</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 2. Minimal Light -->
+    <a href="/themes/minimal-light/reference.html" class="card">
+      <div class="card-preview preview-minimal-light">
+        <span class="preview-label">Minimal Light</span>
+        <span class="preview-sub">White + Clean</span>
+      </div>
+      <div class="card-body">
+        <h3>Minimal Light</h3>
+        <p data-i18n="desc-minimal-light">Bright white canvas with clean typography. Versatile and professional for any setting, from classrooms to boardrooms.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-general">General</span>
+          <span class="tag" data-i18n="tag-seminar">Seminar</span>
+          <span class="tag" data-i18n="tag-lecture">Lecture</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 3. Keynote Apple -->
+    <a href="/themes/keynote-apple/reference.html" class="card">
+      <div class="card-preview preview-keynote-apple">
+        <span class="preview-label">Keynote Apple</span>
+        <span class="preview-sub">Cinematic gradient</span>
+      </div>
+      <div class="card-body">
+        <h3>Keynote Apple</h3>
+        <p data-i18n="desc-keynote-apple">Cinematic dark gradients inspired by Apple keynote presentations. Bold headlines with elegant transitions and depth.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-product-launch">Product Launch</span>
+          <span class="tag" data-i18n="tag-demo">Demo</span>
+          <span class="tag" data-i18n="tag-keynote">Keynote</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 4. Corporate -->
+    <a href="/themes/corporate/reference.html" class="card">
+      <div class="card-preview preview-corporate">
+        <span class="preview-label">Corporate</span>
+        <span class="preview-sub">Navy + Gold</span>
+      </div>
+      <div class="card-body">
+        <h3>Corporate</h3>
+        <p data-i18n="desc-corporate">Professional navy and gold palette with structured grid layouts. Clean lines and report-style design for formal settings.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-business">Business</span>
+          <span class="tag" data-i18n="tag-quarterly-report">Quarterly Report</span>
+          <span class="tag" data-i18n="tag-executive">Executive</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 5. Gradient Pop -->
+    <a href="/themes/gradient-pop/reference.html" class="card">
+      <div class="card-preview preview-gradient-pop">
+        <span class="preview-label">Gradient Pop</span>
+        <span class="preview-sub">Purple to Orange</span>
+      </div>
+      <div class="card-body">
+        <h3>Gradient Pop</h3>
+        <p data-i18n="desc-gradient-pop">Vibrant gradient backgrounds with glass-morphism effects. Bold, energetic design that commands attention.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-startup-pitch">Startup Pitch</span>
+          <span class="tag" data-i18n="tag-product-launch">Product Launch</span>
+          <span class="tag" data-i18n="tag-marketing">Marketing</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 6. Neon Terminal -->
+    <a href="/themes/neon-terminal/reference.html" class="card">
+      <div class="card-preview preview-neon-terminal">
+        <span class="preview-label">$ neon_</span>
+        <span class="preview-sub">&gt; terminal</span>
+      </div>
+      <div class="card-body">
+        <h3>Neon Terminal</h3>
+        <p data-i18n="desc-neon-terminal">Terminal-inspired hacker aesthetic with neon green and cyan accents. Monospace everything, scanlines, and glow effects.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-developer-talk">Developer Talk</span>
+          <span class="tag" data-i18n="tag-hackathon">Hackathon</span>
+          <span class="tag" data-i18n="tag-ctf">CTF</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 7. Paper -->
+    <a href="/themes/paper/reference.html" class="card">
+      <div class="card-preview preview-paper">
+        <span class="preview-label">Paper</span>
+        <span class="preview-sub">Serif &middot; Academic</span>
+      </div>
+      <div class="card-body">
+        <h3>Paper</h3>
+        <p data-i18n="desc-paper">Warm off-white background with serif typography. Kraft paper texture feel for an academic, hand-crafted aesthetic.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-education">Education</span>
+          <span class="tag" data-i18n="tag-lecture">Lecture</span>
+          <span class="tag" data-i18n="tag-workshop">Workshop</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 8. Magazine -->
+    <a href="/themes/magazine/reference.html" class="card">
+      <div class="card-preview preview-magazine">
+        <span class="preview-label">Magazine</span>
+        <span class="preview-sub">Editorial</span>
+      </div>
+      <div class="card-body">
+        <h3>Magazine</h3>
+        <p data-i18n="desc-magazine">Bold asymmetric layouts with strong typography contrast. Editorial magazine spread feel for visually-driven content.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-design">Design</span>
+          <span class="tag" data-i18n="tag-creative">Creative</span>
+          <span class="tag" data-i18n="tag-portfolio">Portfolio</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 9. Data Focus -->
+    <a href="/themes/data-focus/reference.html" class="card">
+      <div class="card-preview preview-data-focus">
+        <span class="preview-label">Data Focus</span>
+        <span class="preview-sub">Charts + Metrics</span>
+      </div>
+      <div class="card-body">
+        <h3>Data Focus</h3>
+        <p data-i18n="desc-data-focus">Clean white with subtle grid background. CSS-only charts, stat cards, and donut graphs for data-driven presentations.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-data-analysis">Data Analysis</span>
+          <span class="tag" data-i18n="tag-research">Research</span>
+          <span class="tag" data-i18n="tag-kpi-dashboard">KPI Dashboard</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 10. Playful -->
+    <a href="/themes/playful/reference.html" class="card">
+      <div class="card-preview preview-playful">
+        <span class="preview-label">Playful</span>
+        <span class="preview-sub">Pastel + Bouncy</span>
+      </div>
+      <div class="card-body">
+        <h3>Playful</h3>
+        <p data-i18n="desc-playful">Rounded corners, pastel colors, and bouncy spring animations. Friendly and approachable for casual settings.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-workshop">Workshop</span>
+          <span class="tag" data-i18n="tag-casual-talk">Casual Talk</span>
+          <span class="tag" data-i18n="tag-retrospective">Retrospective</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>make-slide &mdash; AI Presentation Skill &middot; <a href="https://github.com/kuneosu/make-slide">GitHub</a></p>
+    <p data-i18n="footer-license">MIT License</p>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ===== i18n ===== */
+      var i18n = {
+        en: {
+          'title': '<span>make-slide</span> Theme Gallery',
+          'subtitle': '10 presentation themes designed for AI-generated slides. Click any card to preview the reference deck.',
+          'stat-themes': '<strong>10</strong> themes',
+          'stat-types': '<strong>11</strong> slide types each',
+          'stat-standalone': 'Fully standalone HTML',
+          'desc-minimal-dark': 'Clean dark background with crisp white typography. Minimal decoration, maximum clarity for content-focused presentations.',
+          'desc-minimal-light': 'Bright white canvas with clean typography. Versatile and professional for any setting, from classrooms to boardrooms.',
+          'desc-keynote-apple': 'Cinematic dark gradients inspired by Apple keynote presentations. Bold headlines with elegant transitions and depth.',
+          'desc-corporate': 'Professional navy and gold palette with structured grid layouts. Clean lines and report-style design for formal settings.',
+          'desc-gradient-pop': 'Vibrant gradient backgrounds with glass-morphism effects. Bold, energetic design that commands attention.',
+          'desc-neon-terminal': 'Terminal-inspired hacker aesthetic with neon green and cyan accents. Monospace everything, scanlines, and glow effects.',
+          'desc-paper': 'Warm off-white background with serif typography. Kraft paper texture feel for an academic, hand-crafted aesthetic.',
+          'desc-magazine': 'Bold asymmetric layouts with strong typography contrast. Editorial magazine spread feel for visually-driven content.',
+          'desc-data-focus': 'Clean white with subtle grid background. CSS-only charts, stat cards, and donut graphs for data-driven presentations.',
+          'desc-playful': 'Rounded corners, pastel colors, and bouncy spring animations. Friendly and approachable for casual settings.',
+          'tag-tech-conference': 'Tech Conference',
+          'tag-developer-talk': 'Developer Talk',
+          'tag-meetup': 'Meetup',
+          'tag-general': 'General',
+          'tag-seminar': 'Seminar',
+          'tag-lecture': 'Lecture',
+          'tag-product-launch': 'Product Launch',
+          'tag-demo': 'Demo',
+          'tag-keynote': 'Keynote',
+          'tag-business': 'Business',
+          'tag-quarterly-report': 'Quarterly Report',
+          'tag-executive': 'Executive',
+          'tag-startup-pitch': 'Startup Pitch',
+          'tag-marketing': 'Marketing',
+          'tag-hackathon': 'Hackathon',
+          'tag-ctf': 'CTF',
+          'tag-education': 'Education',
+          'tag-workshop': 'Workshop',
+          'tag-design': 'Design',
+          'tag-creative': 'Creative',
+          'tag-portfolio': 'Portfolio',
+          'tag-data-analysis': 'Data Analysis',
+          'tag-research': 'Research',
+          'tag-kpi-dashboard': 'KPI Dashboard',
+          'tag-casual-talk': 'Casual Talk',
+          'tag-retrospective': 'Retrospective',
+          'footer-license': 'MIT License'
+        },
+        ko: {
+          'title': '<span>make-slide</span> 테마 갤러리',
+          'subtitle': 'AI 슬라이드 생성을 위한 10가지 프레젠테이션 테마. 카드를 클릭하면 레퍼런스 데모를 확인할 수 있습니다.',
+          'stat-themes': '<strong>10</strong>개 테마',
+          'stat-types': '각 <strong>11</strong>가지 슬라이드 타입',
+          'stat-standalone': '완전한 단일 HTML 파일',
+          'desc-minimal-dark': '깔끔한 다크 배경에 선명한 화이트 타이포그래피. 콘텐츠 중심의 발표에 최적.',
+          'desc-minimal-light': '밝은 화이트 캔버스에 클린한 타이포그래피. 세미나부터 비즈니스까지 범용.',
+          'desc-keynote-apple': 'Apple 키노트에서 영감받은 시네마틱 다크 그라디언트. 임팩트 있는 헤드라인.',
+          'desc-corporate': '네이비+골드 팔레트의 구조적 그리드 레이아웃. 포멀한 비즈니스 발표에 적합.',
+          'desc-gradient-pop': '생동감 있는 그라디언트 배경과 글래스모피즘 효과. 시선을 사로잡는 디자인.',
+          'desc-neon-terminal': '네온 그린과 시안 액센트의 터미널 스타일. 모노스페이스, 스캔라인, 글로우 효과.',
+          'desc-paper': '따뜻한 오프화이트 배경에 세리프 타이포. 크래프트지 느낌의 아카데믹 스타일.',
+          'desc-magazine': '비대칭 레이아웃과 강렬한 타이포 대비. 비주얼 중심 콘텐츠에 에디토리얼 느낌.',
+          'desc-data-focus': '미세한 그리드 배경의 클린 화이트. CSS 차트, 스탯 카드, 도넛 그래프 특화.',
+          'desc-playful': '둥근 모서리, 파스텔 컬러, 바운시 애니메이션. 친근하고 캐주얼한 분위기.',
+          'tag-tech-conference': '테크 컨퍼런스',
+          'tag-developer-talk': '개발자 발표',
+          'tag-meetup': '밋업',
+          'tag-general': '일반',
+          'tag-seminar': '세미나',
+          'tag-lecture': '강의',
+          'tag-product-launch': '제품 발표',
+          'tag-demo': '데모',
+          'tag-keynote': '키노트',
+          'tag-business': '비즈니스',
+          'tag-quarterly-report': '분기 보고',
+          'tag-executive': '경영진',
+          'tag-startup-pitch': '스타트업 피칭',
+          'tag-marketing': '마케팅',
+          'tag-hackathon': '해커톤',
+          'tag-ctf': 'CTF',
+          'tag-education': '교육',
+          'tag-workshop': '워크숍',
+          'tag-design': '디자인',
+          'tag-creative': '크리에이티브',
+          'tag-portfolio': '포트폴리오',
+          'tag-data-analysis': '데이터 분석',
+          'tag-research': '리서치',
+          'tag-kpi-dashboard': 'KPI 대시보드',
+          'tag-casual-talk': '캐주얼 토크',
+          'tag-retrospective': '회고',
+          'footer-license': 'MIT 라이선스'
+        }
+      };
+
+      function applyLang(lang) {
+        var strings = i18n[lang];
+        if (!strings) return;
+
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n');
+          if (strings[key] != null) el.textContent = strings[key];
+        });
+
+        document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-html');
+          if (strings[key] != null) el.innerHTML = strings[key];
+        });
+
+        document.documentElement.lang = lang;
+        langBtn.textContent = lang.toUpperCase();
+      }
+
+      /* ===== Theme toggle ===== */
+      var toggle = document.getElementById('themeToggle');
+      var root = document.documentElement;
+
+      var savedTheme = localStorage.getItem('make-slide-gallery-theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        root.setAttribute('data-theme', 'dark');
+      }
+
+      toggle.addEventListener('click', function () {
+        var isDark = root.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+          root.removeAttribute('data-theme');
+          localStorage.setItem('make-slide-gallery-theme', 'light');
+        } else {
+          root.setAttribute('data-theme', 'dark');
+          localStorage.setItem('make-slide-gallery-theme', 'dark');
+        }
+      });
+
+      /* ===== Language toggle ===== */
+      var langBtn = document.getElementById('langToggle');
+      var savedLang = localStorage.getItem('make-slide-gallery-lang');
+      var currentLang = savedLang || (navigator.language.startsWith('ko') ? 'ko' : 'en');
+
+      applyLang(currentLang);
+
+      langBtn.addEventListener('click', function () {
+        currentLang = currentLang === 'en' ? 'ko' : 'en';
+        localStorage.setItem('make-slide-gallery-lang', currentLang);
+        applyLang(currentLang);
+      });
+    })();
+  </script>
+
+</body>
+</html>

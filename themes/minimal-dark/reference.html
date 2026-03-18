@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minimal Dark — make-slide Reference</title>
+
+  <!-- Pretendard Font -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <!-- JetBrains Mono -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <!-- Prism.js Tomorrow Theme -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+  <style>
+    /* ===== Reset ===== */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ===== CSS Variables ===== */
+    :root {
+      --bg: #0a0a0a;
+      --text: #f0f0f0;
+      --text-secondary: #888;
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --surface: #1a1a1a;
+      --border: #2a2a2a;
+      --code-bg: #111;
+      --hint-bg: #1a1a1a;
+      --hint-border: #333;
+      --hint-color: #666;
+      --font-body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* ===== Body ===== */
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== Progress Bar ===== */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: var(--accent);
+      transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      z-index: 1000;
+    }
+
+    /* ===== Slide Counter ===== */
+    .slide-counter {
+      position: fixed;
+      bottom: 24px;
+      right: 32px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-secondary);
+      z-index: 900;
+      user-select: none;
+    }
+
+    /* ===== Keyboard Hints ===== */
+    .hint {
+      position: fixed;
+      bottom: 24px;
+      left: 32px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      z-index: 900;
+      user-select: none;
+    }
+
+    .hint kbd {
+      display: inline-block;
+      background: var(--hint-bg);
+      border: 1px solid var(--hint-border);
+      color: var(--hint-color);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      line-height: 1.6;
+    }
+
+    .hint span {
+      color: var(--hint-color);
+      font-size: 11px;
+      margin-right: 4px;
+    }
+
+    /* ===== Fullscreen Button ===== */
+    .fullscreen-btn {
+      position: fixed;
+      top: 16px;
+      right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 900;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .fullscreen-btn:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* ===== Deck & Slides ===== */
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 80px;
+      opacity: 0;
+      visibility: hidden;
+      overflow-y: auto;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ===== Stagger Animations ===== */
+    .slide.active .a {
+      animation: staggerIn 0.6s ease forwards;
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    .slide.active .a:nth-child(1) { animation-delay: 0.05s; }
+    .slide.active .a:nth-child(2) { animation-delay: 0.12s; }
+    .slide.active .a:nth-child(3) { animation-delay: 0.19s; }
+    .slide.active .a:nth-child(4) { animation-delay: 0.26s; }
+    .slide.active .a:nth-child(5) { animation-delay: 0.33s; }
+    .slide.active .a:nth-child(6) { animation-delay: 0.40s; }
+    .slide.active .a:nth-child(7) { animation-delay: 0.47s; }
+    .slide.active .a:nth-child(8) { animation-delay: 0.54s; }
+    .slide.active .a:nth-child(9) { animation-delay: 0.61s; }
+    .slide.active .a:nth-child(10) { animation-delay: 0.68s; }
+    .slide.active .a:nth-child(11) { animation-delay: 0.75s; }
+    .slide.active .a:nth-child(12) { animation-delay: 0.82s; }
+
+    @keyframes staggerIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== Typography ===== */
+    h1 {
+      font-size: 3.2rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 680px;
+    }
+
+    .hi {
+      color: var(--accent);
+    }
+
+    /* ===== Slide-specific Layouts ===== */
+
+    /* Title Slide */
+    .slide-title {
+      text-align: center;
+    }
+
+    .slide-title .subtitle {
+      font-size: 1.3rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
+    .slide-title .date {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--hint-color);
+      letter-spacing: 0.05em;
+    }
+
+    .slide-title .tag {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    /* Agenda / TOC */
+    .toc-list {
+      list-style: none;
+      text-align: left;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .toc-list li {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 1.15rem;
+      color: var(--text);
+    }
+
+    .toc-list li:last-child {
+      border-bottom: none;
+    }
+
+    .toc-num {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+      min-width: 28px;
+    }
+
+    /* Content Slide */
+    .content-body {
+      text-align: left;
+      max-width: 720px;
+      width: 100%;
+    }
+
+    .content-body h2 {
+      margin-bottom: 20px;
+    }
+
+    .content-body p {
+      margin-bottom: 16px;
+    }
+
+    .content-body ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .content-body ul li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .content-body ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    /* Quote Slide */
+    .slide-quote {
+      text-align: center;
+      max-width: 800px;
+    }
+
+    .quote-mark {
+      font-size: 5rem;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: -10px;
+      font-family: Georgia, serif;
+    }
+
+    .quote-text {
+      font-size: 1.8rem;
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--text);
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    .quote-attr {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .quote-attr strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Comparison Slide */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .comparison-col {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .comparison-col h3 {
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .comparison-col.before h3 {
+      color: var(--text-secondary);
+    }
+
+    .comparison-col.after h3 {
+      color: var(--accent);
+    }
+
+    .comparison-col ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .comparison-col ul li {
+      padding: 8px 0;
+      font-size: 1rem;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5;
+    }
+
+    .comparison-col ul li:last-child {
+      border-bottom: none;
+    }
+
+    .comparison-col.before ul li::before {
+      content: '\2717  ';
+      color: #ef4444;
+    }
+
+    .comparison-col.after ul li::before {
+      content: '\2713  ';
+      color: #22c55e;
+    }
+
+    /* Flow / Steps */
+    .steps {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      width: 100%;
+      max-width: 960px;
+      justify-content: center;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      max-width: 200px;
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .step-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 12px;
+      color: var(--border);
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      width: 48px;
+    }
+
+    /* Cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 24px;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Bar Chart */
+    .chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+      height: 240px;
+      width: 100%;
+      max-width: 600px;
+      padding: 0 20px;
+    }
+
+    .chart-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-bar {
+      width: 48px;
+      background: var(--accent);
+      border-radius: 6px 6px 0 0;
+      transition: height 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+    }
+
+    .chart-bar-group:nth-child(1) .chart-bar { opacity: 0.55; }
+    .chart-bar-group:nth-child(2) .chart-bar { opacity: 0.70; }
+    .chart-bar-group:nth-child(3) .chart-bar { opacity: 0.85; }
+    .chart-bar-group:nth-child(4) .chart-bar { opacity: 1.00; }
+    .chart-bar-group:nth-child(5) .chart-bar { opacity: 0.90; }
+
+    .chart-value {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .chart-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .chart-baseline {
+      width: 100%;
+      max-width: 600px;
+      height: 1px;
+      background: var(--border);
+      margin-top: 0;
+    }
+
+    /* Code Block */
+    .code-container {
+      width: 100%;
+      max-width: 720px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .code-dot.red { background: #ef4444; }
+    .code-dot.yellow { background: #eab308; }
+    .code-dot.green { background: #22c55e; }
+
+    .code-filename {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-left: 8px;
+    }
+
+    .code-container pre {
+      margin: 0;
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    .code-container pre code {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    /* Override Prism background for our dark theme */
+    .code-container pre[class*="language-"] {
+      background: var(--code-bg);
+      margin: 0;
+      border-radius: 0;
+    }
+
+    /* Image Placeholder */
+    .image-placeholder {
+      width: 100%;
+      max-width: 700px;
+      height: 360px;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .image-placeholder .placeholder-icon {
+      font-size: 3rem;
+    }
+
+    .image-placeholder .placeholder-label {
+      font-size: 0.95rem;
+      color: var(--hint-color);
+    }
+
+    .image-placeholder .placeholder-size {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--hint-color);
+    }
+
+    /* Closing Slide */
+    .slide-closing {
+      text-align: center;
+    }
+
+    .slide-closing h1 {
+      font-size: 3.6rem;
+      margin-bottom: 12px;
+    }
+
+    .slide-closing p {
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .contact-links {
+      display: flex;
+      gap: 24px;
+      margin-top: 32px;
+      justify-content: center;
+    }
+
+    .contact-link {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 8px 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .contact-link:hover {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    /* ===== Speaker Notes Panel ===== */
+    .notes-panel {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: none;
+      grid-template-columns: 2fr 1fr;
+      gap: 1px;
+      z-index: 950;
+      max-height: 35vh;
+      overflow-y: auto;
+    }
+
+    .notes-panel.open {
+      display: grid;
+    }
+
+    .notes-current,
+    .notes-preview {
+      padding: 20px 28px;
+    }
+
+    .notes-preview {
+      border-left: 1px solid var(--border);
+    }
+
+    .notes-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--hint-color);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .notes-slide-num {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .notes-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .notes-next-title {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .slide {
+        padding: 40px 28px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .comparison {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .steps {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .step-arrow {
+        transform: rotate(90deg);
+        width: auto;
+        padding: 0;
+      }
+
+      .chart {
+        gap: 12px;
+        height: 180px;
+      }
+
+      .chart-bar {
+        width: 32px;
+      }
+
+      .hint {
+        display: none;
+      }
+
+      .notes-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .notes-preview {
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+    }
+
+    /* ===== Print / PDF Export ===== */
+    @media print {
+      body {
+        overflow: visible;
+        background: #0a0a0a;
+      }
+
+      .progress-bar,
+      .slide-counter,
+      .hint,
+      .fullscreen-btn,
+      .notes-panel {
+        display: none !important;
+      }
+
+      .deck {
+        width: auto;
+        height: auto;
+        position: static;
+      }
+
+      .slide {
+        position: relative;
+        opacity: 1;
+        visibility: visible;
+        page-break-after: always;
+        page-break-inside: avoid;
+        width: 100vw;
+        height: 100vh;
+        padding: 60px 80px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .slide .a {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+      }
+
+      @page {
+        size: landscape;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- Slide Counter -->
+  <div class="slide-counter" id="counter"></div>
+
+  <!-- Keyboard Hints -->
+  <div class="hint">
+    <kbd>Space</kbd><span>next</span>
+    <kbd>&larr;</kbd><kbd>&rarr;</kbd><span>navigate</span>
+    <kbd>F</kbd><span>fullscreen</span>
+    <kbd>S</kbd><span>notes</span>
+  </div>
+
+  <!-- Fullscreen Button -->
+  <button class="fullscreen-btn" onclick="toggleFullscreen()">&#x26F6; Fullscreen</button>
+
+  <!-- Slide Deck -->
+  <div class="deck">
+
+    <!-- Slide 1: Title -->
+    <div class="slide active" data-notes="Welcome everyone to this presentation. Today we will explore modern web architecture patterns and best practices. Take a moment to introduce yourself and set the context for the audience.">
+      <div class="slide-title">
+        <div class="a tag">Reference Deck</div>
+        <h1 class="a">Modern Web<br>Architecture</h1>
+        <p class="a subtitle">Patterns, principles, and practices<br>for building scalable applications</p>
+        <p class="a date">2026.03.18</p>
+      </div>
+    </div>
+
+    <!-- Slide 2: Agenda / TOC -->
+    <div class="slide" data-notes="Here is our agenda for today. We will cover these topics in order. Feel free to ask questions at any time during the presentation.">
+      <h2 class="a">Agenda</h2>
+      <ol class="toc-list">
+        <li class="a"><span class="toc-num">01</span> Architecture Overview</li>
+        <li class="a"><span class="toc-num">02</span> Design Principles</li>
+        <li class="a"><span class="toc-num">03</span> Before &amp; After Comparison</li>
+        <li class="a"><span class="toc-num">04</span> Implementation Process</li>
+        <li class="a"><span class="toc-num">05</span> Key Features</li>
+        <li class="a"><span class="toc-num">06</span> Performance Metrics</li>
+        <li class="a"><span class="toc-num">07</span> Code Walkthrough</li>
+        <li class="a"><span class="toc-num">08</span> Visual Assets</li>
+      </ol>
+    </div>
+
+    <!-- Slide 3: Content with Text Body -->
+    <div class="slide" data-notes="This slide covers the fundamental architectural concepts. Emphasize that these principles apply regardless of the specific technology stack being used.">
+      <div class="content-body">
+        <h2 class="a">Architecture <span class="hi">Overview</span></h2>
+        <p class="a">
+          A well-designed architecture separates concerns into distinct layers,
+          enabling teams to work independently while maintaining system coherence.
+          Each layer has clear responsibilities and well-defined interfaces.
+        </p>
+        <ul>
+          <li class="a">Presentation layer handles user interaction and rendering</li>
+          <li class="a">Business logic encapsulates domain rules and workflows</li>
+          <li class="a">Data access layer manages persistence and external services</li>
+          <li class="a">Infrastructure provides cross-cutting concerns like logging</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 4: Quote -->
+    <div class="slide" data-notes="This quote from Martin Fowler captures the essence of good architecture. Pause here to let it sink in. You can share your own interpretation or ask the audience for theirs.">
+      <div class="slide-quote">
+        <div class="a quote-mark">&ldquo;</div>
+        <p class="a quote-text">Any fool can write code that a computer can understand.<br>Good programmers write code that humans can understand.</p>
+        <p class="a quote-attr">&mdash; <strong>Martin Fowler</strong>, Refactoring (1999)</p>
+      </div>
+    </div>
+
+    <!-- Slide 5: Comparison (Before vs After) -->
+    <div class="slide" data-notes="This comparison shows the tangible improvements after adopting modern architecture patterns. Highlight specific metrics like build time reduction and deployment frequency improvements.">
+      <h2 class="a" style="margin-bottom: 28px;">Before vs After</h2>
+      <div class="comparison">
+        <div class="comparison-col before a">
+          <h3>Before</h3>
+          <ul>
+            <li>Monolithic deployment (45 min)</li>
+            <li>Manual testing only</li>
+            <li>Single point of failure</li>
+            <li>Weekly release cycles</li>
+            <li>Tightly coupled modules</li>
+          </ul>
+        </div>
+        <div class="comparison-col after a">
+          <h3>After</h3>
+          <ul>
+            <li>Containerized services (3 min)</li>
+            <li>Automated CI/CD pipeline</li>
+            <li>Redundant, self-healing</li>
+            <li>Multiple deploys per day</li>
+            <li>Loosely coupled microservices</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Flow / Steps -->
+    <div class="slide" data-notes="Walk through each step of the implementation process. Emphasize that the order matters: starting with design before writing code prevents costly rework later.">
+      <h2 class="a" style="margin-bottom: 36px;">Implementation Process</h2>
+      <div class="steps">
+        <div class="step a">
+          <div class="step-num">1</div>
+          <div class="step-title">Design</div>
+          <div class="step-desc">Define interfaces, data models, and system boundaries</div>
+        </div>
+        <div class="step-arrow a">&rarr;</div>
+        <div class="step a">
+          <div class="step-num">2</div>
+          <div class="step-title">Build</div>
+          <div class="step-desc">Implement services with test-driven development</div>
+        </div>
+        <div class="step-arrow a">&rarr;</div>
+        <div class="step a">
+          <div class="step-num">3</div>
+          <div class="step-title">Validate</div>
+          <div class="step-desc">Integration tests, load tests, security audit</div>
+        </div>
+        <div class="step-arrow a">&rarr;</div>
+        <div class="step a">
+          <div class="step-num">4</div>
+          <div class="step-title">Deploy</div>
+          <div class="step-desc">Blue-green deployment with automated rollback</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Cards -->
+    <div class="slide" data-notes="These three features are the core value propositions of the new architecture. Spend about one minute on each card, giving concrete examples from your project.">
+      <h2 class="a" style="margin-bottom: 28px;">Key Features</h2>
+      <div class="cards">
+        <div class="card a">
+          <span class="card-icon">&#9889;</span>
+          <h3>Performance</h3>
+          <p>Sub-100ms response times with edge caching and optimized database queries across all endpoints.</p>
+        </div>
+        <div class="card a">
+          <span class="card-icon">&#128274;</span>
+          <h3>Security</h3>
+          <p>Zero-trust architecture with end-to-end encryption, RBAC, and automated vulnerability scanning.</p>
+        </div>
+        <div class="card a">
+          <span class="card-icon">&#128200;</span>
+          <h3>Scalability</h3>
+          <p>Horizontal auto-scaling from 10 to 10,000 concurrent users with no configuration changes.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 8: Data / Chart -->
+    <div class="slide" data-notes="These metrics show the performance improvements over the past five quarters. Note the significant jump in Q3 when we deployed the new caching layer. The slight dip in Q5 is due to increased feature complexity.">
+      <h2 class="a" style="margin-bottom: 8px;">Performance Metrics</h2>
+      <p class="a" style="margin-bottom: 28px; text-align: center;">Response time improvement over 5 quarters (ms)</p>
+      <div class="chart a">
+        <div class="chart-bar-group">
+          <div class="chart-value">320</div>
+          <div class="chart-bar" style="height: 65%;"></div>
+          <div class="chart-label">Q1</div>
+        </div>
+        <div class="chart-bar-group">
+          <div class="chart-value">240</div>
+          <div class="chart-bar" style="height: 50%;"></div>
+          <div class="chart-label">Q2</div>
+        </div>
+        <div class="chart-bar-group">
+          <div class="chart-value">145</div>
+          <div class="chart-bar" style="height: 30%;"></div>
+          <div class="chart-label">Q3</div>
+        </div>
+        <div class="chart-bar-group">
+          <div class="chart-value">88</div>
+          <div class="chart-bar" style="height: 18%;"></div>
+          <div class="chart-label">Q4</div>
+        </div>
+        <div class="chart-bar-group">
+          <div class="chart-value">62</div>
+          <div class="chart-bar" style="height: 13%;"></div>
+          <div class="chart-label">Q5</div>
+        </div>
+      </div>
+      <div class="chart-baseline a"></div>
+    </div>
+
+    <!-- Slide 9: Code Block -->
+    <div class="slide" data-notes="This code example shows how to create a simple API route handler. Walk through the middleware pattern, the async/await syntax, and the error handling approach. Mention that this pattern is consistent across all endpoints.">
+      <h2 class="a" style="margin-bottom: 20px;">Code Walkthrough</h2>
+      <div class="code-container a">
+        <div class="code-header">
+          <span class="code-dot red"></span>
+          <span class="code-dot yellow"></span>
+          <span class="code-dot green"></span>
+          <span class="code-filename">server.js</span>
+        </div>
+        <pre><code class="language-javascript">import express from 'express';
+import { rateLimit } from 'express-rate-limit';
+
+const app = express();
+
+// Middleware: rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests' }
+});
+
+app.use('/api', limiter);
+
+// Route handler with async/await
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const user = await db.users.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    res.json({ data: user });
+  } catch (err) {
+    console.error('Fetch failed:', err.message);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+
+app.listen(3000, () => console.log('Listening on :3000'));</code></pre>
+      </div>
+    </div>
+
+    <!-- Slide 10: Image Placeholder -->
+    <div class="slide" data-notes="Replace this placeholder with your actual architecture diagram or screenshot. Recommended image size is 1920x1080 for best results on presentation displays.">
+      <h2 class="a" style="margin-bottom: 24px;">System Architecture</h2>
+      <div class="image-placeholder a">
+        <span class="placeholder-icon">&#128247;</span>
+        <span class="placeholder-label">Image placeholder</span>
+        <span class="placeholder-size">Recommended: 1920 &times; 1080 px</span>
+      </div>
+    </div>
+
+    <!-- Slide 11: Closing / Thank You -->
+    <div class="slide" data-notes="Thank the audience for their time. Open the floor for questions. Share your contact information and mention that the slides will be available online after the talk.">
+      <div class="slide-closing">
+        <h1 class="a">Thank You</h1>
+        <p class="a">Questions, feedback, and discussion welcome.</p>
+        <div class="contact-links a">
+          <a href="#" class="contact-link">github.com/user</a>
+          <a href="#" class="contact-link">user@email.dev</a>
+          <a href="#" class="contact-link">@user</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Speaker Notes Panel -->
+  <div class="notes-panel" id="notes-panel">
+    <div class="notes-current">
+      <div class="notes-label">Speaker Notes</div>
+      <div class="notes-slide-num" id="notes-slide-num"></div>
+      <div class="notes-text" id="notes-text"></div>
+    </div>
+    <div class="notes-preview">
+      <div class="notes-label">Next</div>
+      <div class="notes-next-title" id="notes-next"></div>
+    </div>
+  </div>
+
+  <!-- Prism.js Core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <!-- Prism.js JavaScript Language Component -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+  <!-- Inline JS: Navigation, Fullscreen, Speaker Notes -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ===== DOM References =====
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const progressBar = document.getElementById('progress');
+      const counter = document.getElementById('counter');
+      const notesPanel = document.getElementById('notes-panel');
+      const notesSlideNum = document.getElementById('notes-slide-num');
+      const notesText = document.getElementById('notes-text');
+      const notesNext = document.getElementById('notes-next');
+
+      let current = 0;
+      const total = slides.length;
+
+      // ===== Navigation =====
+      function goTo(index) {
+        if (index < 0 || index >= total) return;
+
+        slides[current].classList.remove('active');
+        current = index;
+        slides[current].classList.add('active');
+
+        updateUI();
+      }
+
+      function next() {
+        goTo(current + 1);
+      }
+
+      function prev() {
+        goTo(current - 1);
+      }
+
+      function updateUI() {
+        // Progress bar
+        const pct = ((current + 1) / total) * 100;
+        progressBar.style.width = pct + '%';
+
+        // Counter
+        counter.textContent = (current + 1) + ' / ' + total;
+
+        // Speaker notes
+        updateNotes();
+      }
+
+      // ===== Speaker Notes =====
+      function updateNotes() {
+        const slideEl = slides[current];
+        const notes = slideEl.getAttribute('data-notes') || 'No notes for this slide.';
+
+        notesSlideNum.textContent = 'Slide ' + (current + 1) + ' of ' + total;
+        notesText.textContent = notes;
+
+        // Next slide title
+        if (current + 1 < total) {
+          const nextSlide = slides[current + 1];
+          const nextTitle = nextSlide.querySelector('h1, h2');
+          notesNext.textContent = nextTitle ? nextTitle.textContent : 'Untitled Slide';
+        } else {
+          notesNext.textContent = '(End of presentation)';
+        }
+      }
+
+      function toggleNotes() {
+        notesPanel.classList.toggle('open');
+      }
+
+      // ===== Fullscreen =====
+      window.toggleFullscreen = function () {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(function () {});
+        } else {
+          document.exitFullscreen().catch(function () {});
+        }
+      };
+
+      // ===== Keyboard Events =====
+      document.addEventListener('keydown', function (e) {
+        // Ignore if user is typing in an input
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+            e.preventDefault();
+            next();
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            e.preventDefault();
+            prev();
+            break;
+          case ' ':
+            e.preventDefault();
+            next();
+            break;
+          case 'f':
+          case 'F':
+            e.preventDefault();
+            window.toggleFullscreen();
+            break;
+          case 's':
+          case 'S':
+            e.preventDefault();
+            toggleNotes();
+            break;
+          case 'Home':
+            e.preventDefault();
+            goTo(0);
+            break;
+          case 'End':
+            e.preventDefault();
+            goTo(total - 1);
+            break;
+        }
+      });
+
+      // ===== Click Navigation =====
+      document.querySelector('.deck').addEventListener('click', function (e) {
+        // Don't navigate when clicking on links or buttons
+        if (e.target.closest('a, button, .notes-panel, .code-container')) return;
+
+        const x = e.clientX;
+        const width = window.innerWidth;
+        const leftThird = width / 3;
+
+        if (x < leftThird) {
+          prev();
+        } else {
+          next();
+        }
+      });
+
+      // ===== Touch / Swipe Navigation =====
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let touchEndX = 0;
+      let touchEndY = 0;
+
+      document.addEventListener('touchstart', function (e) {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+
+      document.addEventListener('touchend', function (e) {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+      }, { passive: true });
+
+      function handleSwipe() {
+        const diffX = touchStartX - touchEndX;
+        const diffY = touchStartY - touchEndY;
+        const minSwipe = 50;
+
+        // Only process horizontal swipes (ignore vertical)
+        if (Math.abs(diffX) < minSwipe || Math.abs(diffX) < Math.abs(diffY)) return;
+
+        if (diffX > 0) {
+          // Swiped left -> next
+          next();
+        } else {
+          // Swiped right -> prev
+          prev();
+        }
+      }
+
+      // ===== Initialize =====
+      updateUI();
+
+      // Re-highlight code blocks after Prism loads
+      if (typeof Prism !== 'undefined') {
+        Prism.highlightAll();
+      }
+    })();
+  </script>
+
+</body>
+</html>

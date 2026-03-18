@@ -1,0 +1,68 @@
+/*
+ * make-slide — pdf-export.css
+ * @media print rules
+ * Hide UI controls, each slide = 1 page
+ */
+
+@media print {
+  /* Hide all UI controls */
+  .progress-bar,
+  .slide-counter,
+  .hint,
+  .fullscreen-btn,
+  .notes-panel,
+  #progress,
+  #counter {
+    display: none !important;
+  }
+
+  /* Reset page */
+  html, body {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    background: white;
+  }
+
+  /* Each slide = 1 page */
+  .deck {
+    position: static;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .slide {
+    position: relative;
+    opacity: 1 !important;
+    pointer-events: auto;
+    page-break-after: always;
+    page-break-inside: avoid;
+    break-after: page;
+    break-inside: avoid;
+    width: 100%;
+    height: 100vh;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slide:last-child {
+    page-break-after: auto;
+  }
+
+  /* Disable animations for print */
+  .slide.active .a,
+  .a {
+    opacity: 1 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Page setup */
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+}

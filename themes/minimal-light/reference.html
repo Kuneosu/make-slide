@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minimal Light — make-slide Reference</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#fafafa;font-family:'Pretendard Variable','Pretendard',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* Deck & Slides */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 100px;opacity:0;pointer-events:none;transform:translateY(0);overflow-y:auto}
+.slide.active{opacity:1;pointer-events:auto;z-index:2}
+
+/* Stagger animation */
+.slide.active .a{opacity:0;animation:childIn 0.3s ease forwards}
+.a:nth-child(1){animation-delay:0.02s}
+.a:nth-child(2){animation-delay:0.08s}
+.a:nth-child(3){animation-delay:0.14s}
+.a:nth-child(4){animation-delay:0.20s}
+.a:nth-child(5){animation-delay:0.26s}
+.a:nth-child(6){animation-delay:0.32s}
+.a:nth-child(7){animation-delay:0.38s}
+.a:nth-child(8){animation-delay:0.44s}
+@keyframes childIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Typography */
+.overline{font-size:15px;letter-spacing:6px;color:#666;text-transform:uppercase;margin-bottom:24px}
+.xl{font-size:72px;font-weight:800;color:#1a1a1a;line-height:1.15}
+.lg{font-size:52px;font-weight:800;color:#1a1a1a;line-height:1.2}
+.md{font-size:40px;font-weight:700;color:#1a1a1a;line-height:1.3}
+.sub{font-size:20px;color:#555;margin-top:20px}
+.tag{font-size:13px;letter-spacing:4px;color:#0066cc;text-transform:uppercase;margin-bottom:16px}
+.num{font-size:160px;font-weight:900;color:rgba(0,0,0,0.08);position:absolute;top:30px;right:70px;line-height:1;pointer-events:none}
+.body{font-size:22px;color:#444;line-height:1.9;max-width:720px;margin-top:24px}
+.hi{color:#0066cc;font-weight:600}
+
+/* Quote */
+.qm{font-size:100px;color:#0066cc;line-height:1;margin-bottom:-10px;font-family:Georgia,serif}
+.qt{font-size:36px;font-weight:300;color:#1a1a1a;line-height:1.7;max-width:650px;font-style:italic}
+.qt strong{font-weight:700;color:#0a84ff}
+.qt-attr{font-size:16px;color:#888;margin-top:20px;font-style:normal;letter-spacing:1px}
+
+/* TOC */
+.toc{display:flex;flex-direction:column;gap:14px;margin-top:28px;width:100%;max-width:620px}
+.toc-item{display:flex;align-items:center;gap:20px;padding:18px 24px;background:#fff;border:1px solid #e0e0e0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.toc-n{font-size:28px;font-weight:800;color:#333;min-width:44px;font-family:'JetBrains Mono',monospace}
+.toc-t{font-size:20px;color:#333;font-weight:500;text-align:left}
+.toc-s{font-size:13px;color:#666;margin-top:2px;text-align:left}
+
+/* Cards */
+.cards{display:flex;gap:20px;margin-top:32px}
+.card{flex:1;padding:28px;background:#fff;border:1px solid #e0e0e0;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);text-align:left}
+.card-icon{font-size:32px;margin-bottom:10px;color:#0a84ff}
+.card h3{font-size:18px;font-weight:600;color:#222;margin-bottom:6px}
+.card p{font-size:14px;color:#444;line-height:1.6}
+
+/* Flow steps */
+.flow{display:flex;align-items:center;gap:20px;margin-top:32px;flex-wrap:wrap;justify-content:center}
+.step{padding:22px 30px;background:#fff;border:1px solid #e0e0e0;border-radius:14px;text-align:center;min-width:150px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.step-icon{font-size:28px;margin-bottom:8px;color:#0a84ff}
+.step-label{font-size:17px;color:#2a2a2a;font-weight:500}
+.step-sub{font-size:12px;color:#555;margin-top:4px}
+.arrow{font-size:24px;color:#ccc}
+
+/* Compare */
+.cmp{display:flex;gap:24px;margin-top:32px;max-width:780px}
+.cmp-col{flex:1;padding:28px;border-radius:14px;text-align:left}
+.cmp-bad{background:#f8f8f8;border:1px solid #e0e0e0}
+.cmp-good{background:#f8f8f8;border:1px solid #0066cc}
+.cmp-label{font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:700}
+.cmp-bad .cmp-label{color:#888}
+.cmp-good .cmp-label{color:#0066cc}
+.cmp-col p{font-size:17px;color:#333;line-height:1.8}
+
+/* Bar chart */
+.chart{display:flex;align-items:flex-end;gap:28px;margin-top:36px;height:220px}
+.bar-group{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar{width:56px;border-radius:8px 8px 0 0;transition:height 0.6s ease}
+.bar-label{font-size:14px;color:#555;margin-top:10px;font-weight:500}
+.bar-value{font-size:13px;color:#fff;font-weight:700;font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+
+/* Code block */
+.code-block{background:#f5f5f5;border:1px solid #e0e0e0;border-radius:14px;padding:28px 32px;margin-top:28px;max-width:720px;width:100%;text-align:left;overflow-x:auto}
+.code-block pre{margin:0;font-size:15px;line-height:1.8}
+.code-block code{font-family:'JetBrains Mono',monospace;font-size:15px}
+
+/* Image placeholder */
+.img-placeholder{width:640px;height:360px;background:#e8e8e8;border:2px dashed #ccc;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-top:28px;color:#999}
+.img-placeholder-icon{font-size:48px;margin-bottom:12px;opacity:0.5}
+.img-placeholder-text{font-size:15px;letter-spacing:1px}
+
+/* Progress bar */
+.progress-bar{position:fixed;top:0;left:0;height:2px;background:#0066cc;z-index:100;transition:width 0.4s ease}
+
+/* Slide counter */
+.slide-counter{position:fixed;bottom:20px;right:30px;font-size:12px;color:#999;font-family:'JetBrains Mono',monospace;z-index:100}
+
+/* Keyboard hints */
+.hint{position:fixed;bottom:20px;left:30px;font-size:11px;color:#999;z-index:100;display:flex;gap:12px}
+.hint span{display:flex;align-items:center;gap:4px}
+.kbd{padding:2px 6px;border-radius:3px;background:#e8e8e8;border:1px solid #ccc;font-family:'JetBrains Mono',monospace;font-size:10px;color:#555}
+
+/* Fullscreen button */
+.fullscreen-btn{position:fixed;top:16px;right:20px;padding:6px 16px;border-radius:20px;background:#eee;border:1px solid #ddd;color:#666;font-size:11px;cursor:pointer;z-index:100;font-family:'Pretendard Variable','Pretendard',sans-serif}
+.fullscreen-btn:hover{color:#0066cc;border-color:#0a84ff}
+
+/* Notes panel */
+.notes-panel{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e0e0e0;z-index:200;display:none;box-shadow:0 -2px 12px rgba(0,0,0,0.06)}
+.notes-panel.open{display:flex}
+.notes-current{flex:2;padding:24px 32px;border-right:1px solid #e0e0e0}
+.notes-preview{flex:1;padding:24px 32px;background:#fafafa}
+.notes-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#999;margin-bottom:10px;font-weight:600}
+.notes-slide-num{font-size:12px;color:#0066cc;font-family:'JetBrains Mono',monospace;margin-bottom:8px}
+.notes-text{font-size:16px;color:#444;line-height:1.7}
+.notes-next-title{font-size:15px;color:#555;line-height:1.5}
+
+/* Print / PDF export */
+@media print{
+  .progress-bar,.slide-counter,.hint,.fullscreen-btn,.notes-panel{display:none!important}
+  html,body{overflow:visible;height:auto;background:#fff}
+  .deck{height:auto;overflow:visible}
+  .slide{position:relative;opacity:1!important;pointer-events:auto;page-break-after:always;page-break-inside:avoid;min-height:100vh;display:flex!important}
+  .slide .a{opacity:1!important;animation:none!important}
+  @page{size:landscape;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+<div class="slide-counter" id="counter"></div>
+<div class="hint"><span><span class="kbd">Space</span> Next</span><span><span class="kbd">&larr;&rarr;</span> Nav</span><span><span class="kbd">F</span> Fullscreen</span><span><span class="kbd">S</span> Notes</span></div>
+<button class="fullscreen-btn" onclick="toggleFullscreen()">&#x26F6; Fullscreen</button>
+
+<div class="deck">
+
+<!-- Slide 1: Title -->
+<div class="slide active" data-notes="Welcome to the Minimal Light theme reference deck. This presentation demonstrates all available slide types and components. Use arrow keys or space to navigate.">
+  <div class="a overline">MAKE-SLIDE &middot; 2026.03.18</div>
+  <h1 class="a xl">Minimal Light<br>Theme Reference</h1>
+  <div class="a sub">A clean, modern slide template &middot; Typography &middot; Layout &middot; Components</div>
+</div>
+
+<!-- Slide 2: Agenda / TOC -->
+<div class="slide" data-notes="This is the agenda slide. It shows a numbered list of topics with short descriptions. Each item uses a card-like container for visual clarity.">
+  <div class="a tag">Agenda</div>
+  <h2 class="a lg">Table of Contents</h2>
+  <div class="toc">
+    <div class="a toc-item"><div class="toc-n">01</div><div><div class="toc-t">Typography &amp; Body Text</div><div class="toc-s">Headings, paragraphs, and inline emphasis styles</div></div></div>
+    <div class="a toc-item"><div class="toc-n">02</div><div><div class="toc-t">Quotation Display</div><div class="toc-s">Large pull-quotes with attribution</div></div></div>
+    <div class="a toc-item"><div class="toc-n">03</div><div><div class="toc-t">Comparison Layout</div><div class="toc-s">Side-by-side before and after columns</div></div></div>
+    <div class="a toc-item"><div class="toc-n">04</div><div><div class="toc-t">Process Flow &amp; Cards</div><div class="toc-s">Step diagrams and feature card grids</div></div></div>
+    <div class="a toc-item"><div class="toc-n">05</div><div><div class="toc-t">Data, Code &amp; Media</div><div class="toc-s">Charts, syntax highlighting, and image placeholders</div></div></div>
+  </div>
+</div>
+
+<!-- Slide 3: Content with text body -->
+<div class="slide" data-notes="This slide demonstrates body text content. The body class provides comfortable reading with 22px font size and 1.9 line height. The hi class highlights key terms in the accent blue color.">
+  <div class="num">01</div>
+  <div class="a tag">Content</div>
+  <h2 class="a md">Design Principles<br>for Clear Communication</h2>
+  <p class="a body">
+    Great presentations rely on <span class="hi">visual hierarchy</span> and restraint.
+    Each slide should convey a single idea with minimal clutter.
+    White space is not empty space — it is a <span class="hi">deliberate design choice</span>
+    that guides the viewer's attention to what matters most.
+    Typography, contrast, and rhythm create a reading experience
+    that feels effortless and <span class="hi">professional</span>.
+  </p>
+</div>
+
+<!-- Slide 4: Quote slide -->
+<div class="slide" data-notes="This is the quote slide layout. It features a large decorative quotation mark, italic text, and an attribution line below. Useful for highlighting key insights or testimonials.">
+  <div class="a qm">&ldquo;</div>
+  <div class="a qt">
+    Simplicity is the <strong>ultimate sophistication</strong>.
+    Remove everything that does not serve the message,
+    and what remains will <strong>speak volumes</strong>.
+  </div>
+  <div class="a qt-attr">&mdash; Design Principle</div>
+</div>
+
+<!-- Slide 5: Comparison slide (Before vs After) -->
+<div class="slide" data-notes="The comparison slide uses two columns: a neutral 'before' column on the left and a highlighted 'after' column on the right with an accent border. This layout is ideal for showing improvements or trade-offs.">
+  <div class="num">02</div>
+  <div class="a tag">Comparison</div>
+  <h2 class="a lg">Before vs After</h2>
+  <div class="a cmp">
+    <div class="cmp-col cmp-bad">
+      <div class="cmp-label">Before</div>
+      <p>Dense paragraphs of text with no visual breaks or structure.<br><br>All information presented at the same level of emphasis.<br><br>Readers struggle to find key takeaways quickly.</p>
+    </div>
+    <div class="cmp-col cmp-good">
+      <div class="cmp-label">After</div>
+      <p>Clear <strong style="color:#0066cc">hierarchy</strong> with headings, spacing, and emphasis.<br><br>Key points are visually distinct and scannable.<br><br>Readers grasp the message in seconds.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Flow / Steps -->
+<div class="slide" data-notes="The flow slide shows a horizontal step-by-step process. Each step has an icon, label, and description. Arrows connect the steps to indicate progression. This layout works for workflows, pipelines, and multi-phase processes.">
+  <div class="num">03</div>
+  <div class="a tag">Process</div>
+  <h2 class="a md">Four-Step Workflow</h2>
+  <div class="a flow">
+    <div class="step">
+      <div class="step-icon">&#x1F4CB;</div>
+      <div class="step-label">Research</div>
+      <div class="step-sub">Gather requirements</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="step">
+      <div class="step-icon">&#x270F;&#xFE0F;</div>
+      <div class="step-label">Design</div>
+      <div class="step-sub">Create wireframes</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="step">
+      <div class="step-icon">&#x1F6E0;&#xFE0F;</div>
+      <div class="step-label">Build</div>
+      <div class="step-sub">Develop prototype</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="step">
+      <div class="step-icon">&#x1F680;</div>
+      <div class="step-label">Launch</div>
+      <div class="step-sub">Deploy and iterate</div>
+    </div>
+  </div>
+  <p class="a body">Each phase feeds into the next — <span class="hi">iteration</span> is built into every step.</p>
+</div>
+
+<!-- Slide 7: Cards -->
+<div class="slide" data-notes="The cards slide presents three feature cards in a horizontal row. Each card has an emoji icon, a title, and a short description. Cards use a white background with a subtle border and shadow for depth.">
+  <div class="a tag">Features</div>
+  <h2 class="a lg">Core Capabilities</h2>
+  <div class="a cards">
+    <div class="card">
+      <div class="card-icon">&#x26A1;</div>
+      <h3>Performance</h3>
+      <p>Optimized rendering pipeline ensures smooth 60fps animations even on complex slide transitions and large decks.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#x1F3A8;</div>
+      <h3>Themeable</h3>
+      <p>Fully customizable color system, typography scale, and spacing tokens. Switch themes with a single configuration change.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#x1F4F1;</div>
+      <h3>Responsive</h3>
+      <p>Touch-friendly navigation with swipe gestures. Presentations adapt gracefully from desktop to tablet to mobile screens.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: Data / Bar Chart -->
+<div class="slide" data-notes="This slide demonstrates a CSS-only bar chart. Each bar uses the accent color with varying opacity to create visual differentiation. The chart is fully responsive and requires no JavaScript charting library.">
+  <div class="num">04</div>
+  <div class="a tag">Data</div>
+  <h2 class="a md">Quarterly Performance</h2>
+  <div class="a chart">
+    <div class="bar-group">
+      <div class="bar-value" style="color:#555">42%</div>
+      <div class="bar" style="height:92px;background:rgba(0,102,204,0.35)"></div>
+      <div class="bar-label">Q1</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-value" style="color:#555">58%</div>
+      <div class="bar" style="height:128px;background:rgba(0,102,204,0.50)"></div>
+      <div class="bar-label">Q2</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-value" style="color:#555">73%</div>
+      <div class="bar" style="height:160px;background:rgba(0,102,204,0.70)"></div>
+      <div class="bar-label">Q3</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-value" style="color:#555">91%</div>
+      <div class="bar" style="height:200px;background:rgba(0,102,204,0.90)"></div>
+      <div class="bar-label">Q4</div>
+    </div>
+  </div>
+  <p class="a body">Steady growth across all quarters with <span class="hi">91% target completion</span> by year end.</p>
+</div>
+
+<!-- Slide 9: Code block with Prism.js -->
+<div class="slide" data-notes="This slide showcases syntax-highlighted code using Prism.js. The code block uses JetBrains Mono for clear monospace rendering. The light background with a subtle border keeps it consistent with the overall theme.">
+  <div class="num">05</div>
+  <div class="a tag">Code</div>
+  <h2 class="a md">Slide Configuration</h2>
+  <div class="a code-block">
+    <pre><code class="language-javascript">// Initialize the slide deck with options
+const deck = new SlideDeck({
+  theme: 'minimal-light',
+  transition: 'fade',
+  duration: 300,
+  autoPlay: false,
+});
+
+// Register keyboard navigation
+deck.on('keydown', (event) => {
+  if (event.key === 'ArrowRight') {
+    deck.next();
+  } else if (event.key === 'ArrowLeft') {
+    deck.prev();
+  }
+});
+
+// Start the presentation
+deck.init();</code></pre>
+  </div>
+</div>
+
+<!-- Slide 10: Image placeholder -->
+<div class="slide" data-notes="This slide demonstrates the image placeholder layout. In a real presentation, you would replace the placeholder with an actual image element or a background image. The dashed border indicates where content should be placed.">
+  <div class="a tag">Media</div>
+  <h2 class="a lg">Visual Content</h2>
+  <div class="a img-placeholder">
+    <div class="img-placeholder-icon">&#x1F5BC;&#xFE0F;</div>
+    <div class="img-placeholder-text">IMAGE PLACEHOLDER &mdash; 16:9</div>
+  </div>
+  <p class="a sub">Replace this placeholder with diagrams, screenshots, or photographs</p>
+</div>
+
+<!-- Slide 11: Closing / Thank You -->
+<div class="slide" data-notes="This is the closing slide. Thank you for reviewing the Minimal Light theme reference deck. All slide types and components have been demonstrated.">
+  <div class="a overline">THANK YOU</div>
+  <h1 class="a xl">That's All.</h1>
+  <div class="a sub">Minimal Light &mdash; make-slide Reference Deck</div>
+</div>
+
+</div>
+
+<!-- Notes Panel -->
+<div class="notes-panel" id="notes-panel">
+  <div class="notes-current">
+    <div class="notes-label">Speaker Notes</div>
+    <div class="notes-slide-num" id="notes-slide-num"></div>
+    <div class="notes-text" id="notes-text"></div>
+  </div>
+  <div class="notes-preview">
+    <div class="notes-label">Next</div>
+    <div class="notes-next-title" id="notes-next"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  const slides = [...document.querySelectorAll('.slide')];
+  let cur = 0;
+  let busy = false;
+  let notesOpen = false;
+
+  // ---- Navigation ----
+  function update() {
+    const pct = slides.length > 1 ? (cur / (slides.length - 1)) * 100 : 100;
+    document.getElementById('progress').style.width = pct + '%';
+    document.getElementById('counter').textContent = (cur + 1) + ' / ' + slides.length;
+    updateNotes();
+  }
+
+  function go(to) {
+    if (busy || to === cur || to < 0 || to >= slides.length) return;
+    busy = true;
+
+    const old = slides[cur];
+    const nxt = slides[to];
+
+    old.style.transition = 'opacity 0.15s ease';
+    old.style.opacity = '0';
+
+    setTimeout(function() {
+      old.classList.remove('active');
+      old.style.transition = '';
+
+      nxt.style.opacity = '0';
+      nxt.classList.add('active');
+
+      // Force reflow
+      nxt.offsetHeight;
+      nxt.style.transition = 'opacity 0.2s ease';
+      nxt.style.opacity = '1';
+
+      cur = to;
+      update();
+
+      setTimeout(function() {
+        nxt.style.transition = '';
+        busy = false;
+      }, 200);
+    }, 150);
+  }
+
+  // ---- Keyboard ----
+  document.addEventListener('keydown', function(e) {
+    // Ignore if typing in an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      go(cur + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      go(cur - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      go(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      go(slides.length - 1);
+    } else if (e.key.toLowerCase() === 'f') {
+      e.preventDefault();
+      toggleFullscreen();
+    } else if (e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      toggleNotes();
+    }
+  });
+
+  // ---- Click navigation (left third = back, right two-thirds = forward) ----
+  document.querySelector('.deck').addEventListener('click', function(e) {
+    if (e.target.closest('.card, .toc-item, .step, .cmp-col, .code-block, a, button')) return;
+    var x = e.clientX;
+    var w = window.innerWidth;
+    if (x < w / 3) {
+      go(cur - 1);
+    } else {
+      go(cur + 1);
+    }
+  });
+
+  // ---- Touch / Swipe ----
+  var touchStartX = 0;
+  var touchStartY = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    var dx = touchStartX - e.changedTouches[0].clientX;
+    var dy = touchStartY - e.changedTouches[0].clientY;
+    // Only trigger if horizontal swipe is dominant
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) {
+        go(cur + 1);
+      } else {
+        go(cur - 1);
+      }
+    }
+  }, { passive: true });
+
+  // ---- Fullscreen ----
+  window.toggleFullscreen = function() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(function() {});
+    } else {
+      document.exitFullscreen().catch(function() {});
+    }
+  };
+
+  // ---- Speaker Notes Panel ----
+  window.toggleNotes = function() {
+    notesOpen = !notesOpen;
+    var panel = document.getElementById('notes-panel');
+    if (notesOpen) {
+      panel.classList.add('open');
+      updateNotes();
+    } else {
+      panel.classList.remove('open');
+    }
+  };
+
+  function updateNotes() {
+    if (!notesOpen) return;
+
+    var noteText = slides[cur].getAttribute('data-notes') || '(No notes for this slide)';
+    document.getElementById('notes-slide-num').textContent = 'Slide ' + (cur + 1) + ' of ' + slides.length;
+    document.getElementById('notes-text').textContent = noteText;
+
+    // Next slide preview
+    var nextEl = document.getElementById('notes-next');
+    if (cur + 1 < slides.length) {
+      // Try to find a heading in the next slide
+      var nextSlide = slides[cur + 1];
+      var heading = nextSlide.querySelector('.xl, .lg, .md, .qt');
+      if (heading) {
+        nextEl.textContent = heading.textContent.replace(/\s+/g, ' ').trim();
+      } else {
+        nextEl.textContent = 'Slide ' + (cur + 2);
+      }
+    } else {
+      nextEl.textContent = '(End of presentation)';
+    }
+  }
+
+  // ---- Initialize ----
+  update();
+
+  // Re-highlight code blocks after Prism loads
+  if (typeof Prism !== 'undefined') {
+    Prism.highlightAll();
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paper — make-slide Reference</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<style>
+/* ============================================
+   CSS Variables
+   ============================================ */
+:root {
+  --bg: #f5f0e8;
+  --bg-surface: #faf6ef;
+  --bg-code: #f0ebe0;
+  --text-primary: #3d3929;
+  --text-secondary: #8a7f6e;
+  --text-tertiary: #6b6152;
+  --accent: #b85c38;
+  --accent-deep: #6b4c3b;
+  --border: #d4cbb8;
+  --border-light: #e2dace;
+  --shadow: rgba(61, 57, 41, 0.06);
+  --shadow-md: rgba(61, 57, 41, 0.10);
+  --font-serif: 'Noto Serif', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Pretendard Variable', 'Pretendard', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ============================================
+   Reset
+   ============================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  width:100%;height:100%;overflow:hidden;
+  background:var(--bg);
+  font-family:var(--font-serif);
+  color:var(--text-primary);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Subtle paper texture via CSS */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(180,160,130,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse at 80% 20%, rgba(160,140,110,0.03) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 80%, rgba(140,120,90,0.03) 0%, transparent 60%);
+}
+
+/* ============================================
+   Progress Bar
+   ============================================ */
+.progress-bar{
+  position:fixed;top:0;left:0;height:3px;
+  background:var(--accent);z-index:100;
+  transition:width 0.4s ease;
+}
+
+/* ============================================
+   Slide Counter
+   ============================================ */
+.slide-counter{
+  position:fixed;bottom:20px;right:30px;
+  font-size:12px;color:var(--text-secondary);
+  font-family:var(--font-mono);z-index:100;
+  letter-spacing:0.5px;
+}
+
+/* ============================================
+   Keyboard Hints
+   ============================================ */
+.hint{
+  position:fixed;bottom:20px;left:30px;
+  font-size:11px;color:var(--text-secondary);
+  z-index:100;display:flex;gap:12px;
+  font-family:var(--font-ui);
+}
+.hint span{display:flex;align-items:center;gap:4px}
+.kbd{
+  padding:2px 6px;border-radius:3px;
+  background:var(--bg-surface);border:1px solid var(--border);
+  font-family:var(--font-mono);font-size:10px;
+  color:var(--text-tertiary);
+}
+
+/* ============================================
+   Fullscreen Button
+   ============================================ */
+.fullscreen-btn{
+  position:fixed;top:16px;right:20px;
+  padding:6px 16px;border-radius:20px;
+  background:var(--bg-surface);border:1px solid var(--border);
+  color:var(--text-secondary);font-size:11px;
+  cursor:pointer;z-index:100;
+  font-family:var(--font-ui);
+  transition:color 0.2s, border-color 0.2s;
+}
+.fullscreen-btn:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ============================================
+   Deck & Slides
+   ============================================ */
+.deck{position:relative;width:100vw;height:100vh;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  text-align:center;
+  padding:60px 100px;
+  opacity:0;pointer-events:none;
+  overflow-y:auto;
+}
+.slide.active{opacity:1;pointer-events:auto;z-index:2}
+
+/* ============================================
+   Stagger Animations
+   ============================================ */
+.slide.active .a{opacity:0;animation:childIn 0.4s ease forwards}
+.a:nth-child(1){animation-delay:0.03s}
+.a:nth-child(2){animation-delay:0.10s}
+.a:nth-child(3){animation-delay:0.17s}
+.a:nth-child(4){animation-delay:0.24s}
+.a:nth-child(5){animation-delay:0.31s}
+.a:nth-child(6){animation-delay:0.38s}
+.a:nth-child(7){animation-delay:0.45s}
+.a:nth-child(8){animation-delay:0.52s}
+@keyframes childIn{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+.overline{
+  font-size:14px;letter-spacing:5px;color:var(--text-secondary);
+  text-transform:uppercase;margin-bottom:24px;
+  font-family:var(--font-ui);font-weight:400;
+}
+.xl{
+  font-size:68px;font-weight:700;color:var(--text-primary);
+  line-height:1.2;font-family:var(--font-serif);
+}
+.lg{
+  font-size:48px;font-weight:700;color:var(--text-primary);
+  line-height:1.25;font-family:var(--font-serif);
+}
+.md{
+  font-size:38px;font-weight:600;color:var(--text-primary);
+  line-height:1.35;font-family:var(--font-serif);
+}
+.sub{
+  font-size:19px;color:var(--text-secondary);margin-top:20px;
+  line-height:1.6;font-style:italic;
+}
+.tag{
+  font-size:12px;letter-spacing:4px;color:var(--accent);
+  text-transform:uppercase;margin-bottom:16px;
+  font-family:var(--font-ui);font-weight:600;
+  padding:4px 14px;
+  border:1px solid var(--accent);border-radius:2px;
+}
+.num{
+  font-size:150px;font-weight:700;
+  color:rgba(61,57,41,0.05);
+  position:absolute;top:30px;right:70px;
+  line-height:1;pointer-events:none;
+  font-family:var(--font-serif);
+}
+.body{
+  font-size:21px;color:var(--text-tertiary);
+  line-height:2;max-width:700px;margin-top:24px;
+}
+.hi{color:var(--accent);font-weight:600}
+
+/* ============================================
+   Quote
+   ============================================ */
+.qm{
+  font-size:120px;color:var(--accent);line-height:1;
+  margin-bottom:-16px;font-family:var(--font-serif);
+  opacity:0.6;
+}
+.qt{
+  font-size:32px;font-weight:400;color:var(--text-primary);
+  line-height:1.8;max-width:640px;font-style:italic;
+  font-family:var(--font-serif);
+}
+.qt strong{font-weight:700;color:var(--accent-deep);font-style:italic}
+.qt-attr{
+  font-size:15px;color:var(--text-secondary);
+  margin-top:24px;font-style:normal;
+  letter-spacing:2px;text-transform:uppercase;
+  font-family:var(--font-ui);
+}
+
+/* ============================================
+   TOC / Agenda
+   ============================================ */
+.toc{display:flex;flex-direction:column;gap:12px;margin-top:28px;width:100%;max-width:620px}
+.toc-item{
+  display:flex;align-items:center;gap:20px;
+  padding:16px 24px;
+  background:var(--bg-surface);
+  border:1px solid var(--border-light);
+  border-radius:4px;
+  box-shadow:0 1px 3px var(--shadow);
+  transition:border-color 0.2s;
+}
+.toc-item:hover{border-color:var(--accent)}
+.toc-n{
+  font-size:26px;font-weight:700;color:var(--accent);
+  min-width:44px;font-family:var(--font-serif);
+}
+.toc-t{font-size:19px;color:var(--text-primary);font-weight:600;text-align:left}
+.toc-s{font-size:13px;color:var(--text-secondary);margin-top:2px;text-align:left;font-family:var(--font-ui)}
+
+/* ============================================
+   Cards
+   ============================================ */
+.cards{display:flex;gap:20px;margin-top:32px}
+.card{
+  flex:1;padding:28px;
+  background:var(--bg-surface);
+  border:1px solid var(--border-light);
+  border-radius:4px;
+  box-shadow:0 2px 8px var(--shadow), 0 1px 2px var(--shadow);
+  text-align:left;
+  transition:box-shadow 0.2s, transform 0.2s;
+}
+.card:hover{box-shadow:0 4px 16px var(--shadow-md);transform:translateY(-2px)}
+.card-icon{font-size:28px;margin-bottom:12px}
+.card h3{
+  font-size:18px;font-weight:700;color:var(--text-primary);
+  margin-bottom:8px;font-family:var(--font-serif);
+}
+.card p{font-size:14px;color:var(--text-tertiary);line-height:1.7}
+
+/* ============================================
+   Flow / Steps
+   ============================================ */
+.flow{display:flex;align-items:center;gap:18px;margin-top:32px;flex-wrap:wrap;justify-content:center}
+.step{
+  padding:22px 28px;
+  background:var(--bg-surface);
+  border:1px solid var(--border-light);
+  border-radius:4px;text-align:center;min-width:145px;
+  box-shadow:0 1px 4px var(--shadow);
+}
+.step-num{
+  font-size:13px;font-weight:700;color:var(--accent);
+  margin-bottom:6px;font-family:var(--font-mono);
+  letter-spacing:1px;
+}
+.step-label{font-size:17px;color:var(--text-primary);font-weight:600}
+.step-sub{font-size:12px;color:var(--text-secondary);margin-top:4px;font-family:var(--font-ui)}
+.arrow{font-size:22px;color:var(--border);font-family:var(--font-serif)}
+
+/* ============================================
+   Comparison
+   ============================================ */
+.cmp{display:flex;gap:24px;margin-top:32px;max-width:780px}
+.cmp-col{flex:1;padding:28px;border-radius:4px;text-align:left}
+.cmp-bad{background:var(--bg-surface);border:1px solid var(--border)}
+.cmp-good{background:var(--bg-surface);border:2px solid var(--accent)}
+.cmp-label{
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  margin-bottom:14px;font-weight:700;font-family:var(--font-ui);
+}
+.cmp-bad .cmp-label{color:var(--text-secondary)}
+.cmp-good .cmp-label{color:var(--accent)}
+.cmp-col p{font-size:16px;color:var(--text-tertiary);line-height:1.9}
+
+/* ============================================
+   Bar Chart
+   ============================================ */
+.chart{display:flex;align-items:flex-end;gap:32px;margin-top:36px;height:220px}
+.bar-group{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bar{width:52px;border-radius:3px 3px 0 0;transition:height 0.6s ease}
+.bar-label{
+  font-size:14px;color:var(--text-secondary);margin-top:10px;
+  font-weight:500;font-family:var(--font-ui);
+}
+.bar-value{
+  font-size:13px;color:var(--text-tertiary);font-weight:700;
+  font-family:var(--font-mono);margin-bottom:6px;
+}
+
+/* ============================================
+   Code Block
+   ============================================ */
+.code-block{
+  background:var(--bg-code);
+  border:1px solid var(--border);
+  border-radius:4px;
+  margin-top:28px;max-width:720px;width:100%;
+  text-align:left;overflow:hidden;
+}
+.code-header{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 16px;
+  background:rgba(61,57,41,0.05);
+  border-bottom:1px solid var(--border-light);
+}
+.code-dot{width:10px;height:10px;border-radius:50%;background:var(--border)}
+.code-dot:nth-child(1){background:#e2a89a}
+.code-dot:nth-child(2){background:#dac88e}
+.code-dot:nth-child(3){background:#a8c49a}
+.code-filename{
+  font-size:12px;color:var(--text-secondary);
+  font-family:var(--font-mono);margin-left:8px;
+}
+.code-block pre{
+  margin:0;font-size:14px;line-height:1.9;
+  padding:20px 24px;
+  max-height:50vh;overflow-y:auto;
+  background:transparent !important;
+}
+.code-block code{
+  font-family:var(--font-mono);font-size:14px;
+  background:transparent !important;
+}
+
+/* Override Prism background for paper feel */
+.code-block pre[class*="language-"],
+.code-block code[class*="language-"]{
+  background:transparent !important;
+  text-shadow:none;
+}
+
+/* ============================================
+   Image Placeholder
+   ============================================ */
+.img-placeholder{
+  width:620px;height:350px;
+  background:var(--bg-surface);
+  border:2px dashed var(--border);
+  border-radius:4px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  margin-top:28px;color:var(--text-secondary);
+}
+.img-placeholder-icon{font-size:44px;margin-bottom:12px;opacity:0.4}
+.img-placeholder-text{
+  font-size:13px;letter-spacing:2px;
+  text-transform:uppercase;font-family:var(--font-ui);
+}
+
+/* ============================================
+   Speaker Notes Panel
+   ============================================ */
+.notes-panel{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--bg-surface);
+  border-top:1px solid var(--border);
+  z-index:200;display:none;
+  box-shadow:0 -2px 12px var(--shadow-md);
+}
+.notes-panel.open{display:flex}
+.notes-current{flex:2;padding:24px 32px;border-right:1px solid var(--border-light)}
+.notes-preview{flex:1;padding:24px 32px;background:var(--bg)}
+.notes-label{
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--text-secondary);margin-bottom:10px;font-weight:600;
+  font-family:var(--font-ui);
+}
+.notes-slide-num{
+  font-size:12px;color:var(--accent);
+  font-family:var(--font-mono);margin-bottom:8px;
+}
+.notes-text{font-size:15px;color:var(--text-tertiary);line-height:1.7;font-family:var(--font-serif)}
+.notes-next-title{font-size:14px;color:var(--text-secondary);line-height:1.6}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width:768px){
+  .slide{padding:40px 28px}
+  .xl{font-size:40px}
+  .lg{font-size:32px}
+  .md{font-size:26px}
+  .body{font-size:17px;line-height:1.8}
+  .qt{font-size:22px}
+  .qm{font-size:72px}
+  .cards{flex-direction:column;gap:14px}
+  .cmp{flex-direction:column;gap:14px}
+  .flow{gap:10px}
+  .step{min-width:100px;padding:14px 18px}
+  .step-label{font-size:14px}
+  .arrow{font-size:18px}
+  .chart{gap:16px;height:160px}
+  .bar{width:36px}
+  .code-block pre{font-size:12px;padding:14px 16px}
+  .img-placeholder{width:100%;height:240px}
+  .toc-item{padding:12px 16px}
+  .toc-n{font-size:22px}
+  .toc-t{font-size:16px}
+  .hint{display:none}
+  .num{font-size:100px;right:28px}
+}
+
+/* ============================================
+   Print / PDF Export
+   ============================================ */
+@media print{
+  .progress-bar,.slide-counter,.hint,.fullscreen-btn,.notes-panel{display:none!important}
+  html,body{overflow:visible;height:auto;background:#fff}
+  body::before{display:none}
+  .deck{height:auto;overflow:visible}
+  .slide{
+    position:relative;opacity:1!important;pointer-events:auto;
+    page-break-after:always;page-break-inside:avoid;
+    min-height:100vh;display:flex!important;
+  }
+  .slide .a{opacity:1!important;animation:none!important}
+  @page{size:landscape;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+<div class="slide-counter" id="counter"></div>
+<div class="hint"><span><span class="kbd">Space</span> Next</span><span><span class="kbd">&larr;&rarr;</span> Nav</span><span><span class="kbd">F</span> Fullscreen</span><span><span class="kbd">S</span> Notes</span></div>
+<button class="fullscreen-btn" onclick="toggleFullscreen()">&#x26F6; Fullscreen</button>
+
+<div class="deck">
+
+<!-- Slide 1: Title -->
+<div class="slide active" data-notes="Welcome to the Paper theme reference deck. This theme uses warm, off-white tones and serif typography to evoke the feel of a well-crafted academic document. Use arrow keys or space bar to navigate between slides.">
+  <div class="a overline">MAKE-SLIDE &middot; 2026.03.18</div>
+  <h1 class="a xl">Paper Theme<br>Reference</h1>
+  <div class="a sub">A warm, serif-driven template for lectures, workshops &amp; academic talks</div>
+  <div class="a tag" style="margin-top:28px">Academic &middot; Warm &middot; Serif</div>
+</div>
+
+<!-- Slide 2: Agenda / TOC -->
+<div class="slide" data-notes="This agenda slide presents the topics covered in this reference deck. Each item is displayed in a card-like container with a numbered index for clear structure.">
+  <div class="a tag">Agenda</div>
+  <h2 class="a lg">Table of Contents</h2>
+  <div class="toc">
+    <div class="a toc-item"><div class="toc-n">01</div><div><div class="toc-t">Typography &amp; Body Text</div><div class="toc-s">Serif headings, paragraphs, and inline emphasis</div></div></div>
+    <div class="a toc-item"><div class="toc-n">02</div><div><div class="toc-t">Quotation Display</div><div class="toc-s">Literary-style pull-quotes with attribution</div></div></div>
+    <div class="a toc-item"><div class="toc-n">03</div><div><div class="toc-t">Comparison Layout</div><div class="toc-s">Side-by-side before and after columns</div></div></div>
+    <div class="a toc-item"><div class="toc-n">04</div><div><div class="toc-t">Process Flow &amp; Cards</div><div class="toc-s">Step diagrams and feature card grids</div></div></div>
+    <div class="a toc-item"><div class="toc-n">05</div><div><div class="toc-t">Data, Code &amp; Media</div><div class="toc-s">Charts, syntax highlighting, and image placeholders</div></div></div>
+  </div>
+</div>
+
+<!-- Slide 3: Content with body text -->
+<div class="slide" data-notes="This slide demonstrates body text content with serif typography. The warm color palette and generous line-height create a comfortable reading experience reminiscent of printed books. Highlighted terms use the terracotta accent color.">
+  <div class="num">01</div>
+  <div class="a tag">Content</div>
+  <h2 class="a md">Principles of Visual<br>Communication</h2>
+  <p class="a body">
+    Effective communication begins with <span class="hi">clarity of structure</span>.
+    Each element on the page should serve a purpose &mdash; from the choice of
+    typeface to the weight of a border. White space is not merely empty;
+    it is the <span class="hi">breathing room</span> that allows the reader
+    to absorb each idea at their own pace. When design recedes into the
+    background, the message itself becomes <span class="hi">unmistakable</span>.
+  </p>
+</div>
+
+<!-- Slide 4: Quote -->
+<div class="slide" data-notes="This is the quote slide layout. The large decorative quotation mark, italic serif text, and attributed source line create a literary feel appropriate for academic and reflective presentations.">
+  <div class="a qm">&ldquo;</div>
+  <div class="a qt">
+    The details are not the details.
+    They <strong>make the design</strong>.
+    What separates the ordinary from the extraordinary
+    is the care given to every <strong>small choice</strong>.
+  </div>
+  <div class="a qt-attr">&mdash; Charles Eames</div>
+</div>
+
+<!-- Slide 5: Comparison (Before vs After) -->
+<div class="slide" data-notes="The comparison slide uses two columns with differing visual weight. The left column uses a neutral border while the right column uses the accent terracotta border to draw attention to the improved version.">
+  <div class="num">02</div>
+  <div class="a tag">Comparison</div>
+  <h2 class="a lg">Before &amp; After</h2>
+  <div class="a cmp">
+    <div class="cmp-col cmp-bad">
+      <div class="cmp-label">Before</div>
+      <p>Dense blocks of undifferentiated text with no clear hierarchy or visual anchors.<br><br>All content presented at equal emphasis, forcing readers to parse everything.<br><br>Key insights buried within paragraphs.</p>
+    </div>
+    <div class="cmp-col cmp-good">
+      <div class="cmp-label">After</div>
+      <p>Thoughtful <strong style="color:var(--accent)">typographic hierarchy</strong> guides the reader naturally.<br><br>Strategic emphasis and spacing surface core ideas.<br><br>Readers grasp the essential message within moments.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Flow / Steps -->
+<div class="slide" data-notes="The flow slide illustrates a horizontal process with four sequential steps connected by arrows. Each step includes a number label, title, and short description. This layout is suitable for workflows, methodologies, and multi-phase processes.">
+  <div class="num">03</div>
+  <div class="a tag">Process</div>
+  <h2 class="a md">Four-Phase Methodology</h2>
+  <div class="a flow">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-label">Research</div>
+      <div class="step-sub">Gather requirements</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-label">Draft</div>
+      <div class="step-sub">Outline structure</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-label">Refine</div>
+      <div class="step-sub">Iterate on details</div>
+    </div>
+    <div class="arrow">&rarr;</div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-label">Deliver</div>
+      <div class="step-sub">Present and review</div>
+    </div>
+  </div>
+  <p class="a body">Each phase builds upon the last &mdash; <span class="hi">iteration</span> is integral to the process.</p>
+</div>
+
+<!-- Slide 7: Cards -->
+<div class="slide" data-notes="The cards slide presents three feature cards arranged horizontally. Each card uses the paper surface color with a subtle shadow to create a tactile, layered feel like index cards or note sheets.">
+  <div class="a tag">Features</div>
+  <h2 class="a lg">Core Capabilities</h2>
+  <div class="a cards">
+    <div class="card">
+      <div class="card-icon">&#x1F4D6;</div>
+      <h3>Readability</h3>
+      <p>Generous line-height and serif typography create a reading experience modeled on the printed page, comfortable for extended viewing.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#x1F3A8;</div>
+      <h3>Warm Palette</h3>
+      <p>Earthy tones and off-white backgrounds reduce eye strain while maintaining the warmth and approachability of hand-crafted materials.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#x2702;&#xFE0F;</div>
+      <h3>Versatile Layout</h3>
+      <p>From quotations to data charts, every slide type is designed to feel cohesive within the paper aesthetic without sacrificing clarity.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: Data / Bar Chart -->
+<div class="slide" data-notes="This slide demonstrates a CSS-only bar chart using the terracotta accent color at varying opacities. No JavaScript charting library is needed. The warm color progression reinforces the paper theme aesthetic.">
+  <div class="num">04</div>
+  <div class="a tag">Data</div>
+  <h2 class="a md">Quarterly Results</h2>
+  <div class="a chart">
+    <div class="bar-group">
+      <div class="bar-value">42%</div>
+      <div class="bar" style="height:92px;background:rgba(184,92,56,0.30)"></div>
+      <div class="bar-label">Q1</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-value">58%</div>
+      <div class="bar" style="height:128px;background:rgba(184,92,56,0.50)"></div>
+      <div class="bar-label">Q2</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-value">73%</div>
+      <div class="bar" style="height:160px;background:rgba(184,92,56,0.70)"></div>
+      <div class="bar-label">Q3</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-value">91%</div>
+      <div class="bar" style="height:200px;background:rgba(184,92,56,0.90)"></div>
+      <div class="bar-label">Q4</div>
+    </div>
+  </div>
+  <p class="a body">Consistent growth across all quarters with <span class="hi">91% target completion</span> by year end.</p>
+</div>
+
+<!-- Slide 9: Code Block -->
+<div class="slide" data-notes="This slide showcases syntax-highlighted code using Prism.js with a sepia-tinted background. The code header includes decorative dots and a filename label. JetBrains Mono provides clear monospace rendering within the paper aesthetic.">
+  <div class="num">05</div>
+  <div class="a tag">Code</div>
+  <h2 class="a md">Slide Configuration</h2>
+  <div class="a code-block">
+    <div class="code-header">
+      <span class="code-dot"></span>
+      <span class="code-dot"></span>
+      <span class="code-dot"></span>
+      <span class="code-filename">deck.config.js</span>
+    </div>
+    <pre><code class="language-javascript">// Initialize the slide deck with options
+const deck = new SlideDeck({
+  theme: 'paper',
+  transition: 'fade',
+  duration: 400,
+  autoPlay: false,
+});
+
+// Register keyboard navigation
+deck.on('keydown', (event) => {
+  if (event.key === 'ArrowRight') {
+    deck.next();
+  } else if (event.key === 'ArrowLeft') {
+    deck.prev();
+  }
+});
+
+// Start the presentation
+deck.init();</code></pre>
+  </div>
+</div>
+
+<!-- Slide 10: Image Placeholder -->
+<div class="slide" data-notes="This slide demonstrates the image placeholder layout. In a real presentation, replace the dashed placeholder area with an actual image, diagram, or photograph. The dashed border indicates where visual content should be placed.">
+  <div class="a tag">Media</div>
+  <h2 class="a lg">Visual Content</h2>
+  <div class="a img-placeholder">
+    <div class="img-placeholder-icon">&#x1F5BC;&#xFE0F;</div>
+    <div class="img-placeholder-text">Image Placeholder &mdash; 16:9</div>
+  </div>
+  <p class="a sub">Replace this placeholder with diagrams, photographs, or illustrations</p>
+</div>
+
+<!-- Slide 11: Closing -->
+<div class="slide" data-notes="This is the closing slide. Thank you for reviewing the Paper theme reference deck. All slide types and components have been demonstrated. For questions or feedback, use the contact information provided.">
+  <div class="a overline">Thank You</div>
+  <h1 class="a xl">Finis.</h1>
+  <div class="a sub">Paper &mdash; make-slide Reference Deck</div>
+  <div class="a" style="margin-top:36px;display:flex;gap:24px;flex-wrap:wrap;justify-content:center">
+    <span style="font-size:15px;color:var(--text-secondary);font-family:var(--font-ui);padding:8px 20px;border:1px solid var(--border);border-radius:2px">github.com/example</span>
+    <span style="font-size:15px;color:var(--text-secondary);font-family:var(--font-ui);padding:8px 20px;border:1px solid var(--border);border-radius:2px">hello@example.com</span>
+  </div>
+</div>
+
+</div>
+
+<!-- Notes Panel -->
+<div class="notes-panel" id="notes-panel">
+  <div class="notes-current">
+    <div class="notes-label">Speaker Notes</div>
+    <div class="notes-slide-num" id="notes-slide-num"></div>
+    <div class="notes-text" id="notes-text"></div>
+  </div>
+  <div class="notes-preview">
+    <div class="notes-label">Next</div>
+    <div class="notes-next-title" id="notes-next"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  var slides = [].slice.call(document.querySelectorAll('.slide'));
+  var cur = 0;
+  var busy = false;
+  var notesOpen = false;
+
+  // ---- Progress & Counter Update ----
+  function update() {
+    var pct = slides.length > 1 ? (cur / (slides.length - 1)) * 100 : 100;
+    document.getElementById('progress').style.width = pct + '%';
+    document.getElementById('counter').textContent = (cur + 1) + ' / ' + slides.length;
+    updateNotes();
+  }
+
+  // ---- Go To Slide ----
+  function go(to) {
+    if (busy || to === cur || to < 0 || to >= slides.length) return;
+    busy = true;
+
+    var old = slides[cur];
+    var nxt = slides[to];
+
+    old.style.transition = 'opacity 0.18s ease';
+    old.style.opacity = '0';
+
+    setTimeout(function() {
+      old.classList.remove('active');
+      old.style.transition = '';
+
+      nxt.style.opacity = '0';
+      nxt.classList.add('active');
+
+      // Force reflow
+      nxt.offsetHeight;
+      nxt.style.transition = 'opacity 0.24s ease';
+      nxt.style.opacity = '1';
+
+      cur = to;
+      update();
+
+      setTimeout(function() {
+        nxt.style.transition = '';
+        busy = false;
+      }, 240);
+    }, 180);
+  }
+
+  // ---- Public Navigation ----
+  window.goTo = function(i) { go(i); };
+  window.next = function() { go(cur + 1); };
+  window.prev = function() { go(cur - 1); };
+
+  // ---- Keyboard Events ----
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === ' ' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      go(cur + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      go(cur - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      go(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      go(slides.length - 1);
+    } else if (e.key.toLowerCase() === 'f') {
+      e.preventDefault();
+      toggleFullscreen();
+    } else if (e.key.toLowerCase() === 's') {
+      e.preventDefault();
+      toggleNotes();
+    }
+  });
+
+  // ---- Click Navigation (left 1/3 = prev, right 2/3 = next) ----
+  document.querySelector('.deck').addEventListener('click', function(e) {
+    if (e.target.closest('.card, .toc-item, .step, .cmp-col, .code-block, a, button')) return;
+    var x = e.clientX;
+    var w = window.innerWidth;
+    if (x < w / 3) {
+      go(cur - 1);
+    } else {
+      go(cur + 1);
+    }
+  });
+
+  // ---- Touch / Swipe Navigation ----
+  var touchStartX = 0;
+  var touchStartY = 0;
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    var dx = touchStartX - e.changedTouches[0].clientX;
+    var dy = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0) {
+        go(cur + 1);
+      } else {
+        go(cur - 1);
+      }
+    }
+  }, { passive: true });
+
+  // ---- Fullscreen Toggle ----
+  window.toggleFullscreen = function() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(function() {});
+    } else {
+      document.exitFullscreen().catch(function() {});
+    }
+  };
+
+  // ---- Speaker Notes Panel ----
+  window.toggleNotes = function() {
+    notesOpen = !notesOpen;
+    var panel = document.getElementById('notes-panel');
+    if (notesOpen) {
+      panel.classList.add('open');
+      updateNotes();
+    } else {
+      panel.classList.remove('open');
+    }
+  };
+
+  function updateNotes() {
+    if (!notesOpen) return;
+
+    var noteText = slides[cur].getAttribute('data-notes') || '(No notes for this slide)';
+    document.getElementById('notes-slide-num').textContent = 'Slide ' + (cur + 1) + ' of ' + slides.length;
+    document.getElementById('notes-text').textContent = noteText;
+
+    var nextEl = document.getElementById('notes-next');
+    if (cur + 1 < slides.length) {
+      var nextSlide = slides[cur + 1];
+      var heading = nextSlide.querySelector('.xl, .lg, .md, .qt');
+      if (heading) {
+        nextEl.textContent = heading.textContent.replace(/\s+/g, ' ').trim();
+      } else {
+        nextEl.textContent = 'Slide ' + (cur + 2);
+      }
+    } else {
+      nextEl.textContent = '(End of presentation)';
+    }
+  }
+
+  // ---- Initialize ----
+  update();
+
+  // Re-highlight code blocks after Prism loads
+  if (typeof Prism !== 'undefined') {
+    Prism.highlightAll();
+  }
+})();
+</script>
+</body>
+</html>
