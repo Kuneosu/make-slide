@@ -1,6 +1,6 @@
 {
   "name": "make-slide",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "AI presentation skill — generate single-file HTML slides with 10 themes",
   "bin": {
     "make-slide": "./bin/cli.js"
@@ -11,7 +11,14 @@
     "README.md",
     "LICENSE"
   ],
-  "keywords": ["slides", "presentation", "ai", "claude", "skill", "html"],
+  "keywords": [
+    "slides",
+    "presentation",
+    "ai",
+    "claude",
+    "skill",
+    "html"
+  ],
   "author": "Kuneosu",
   "license": "MIT",
   "repository": {
