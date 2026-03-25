@@ -34,6 +34,9 @@ Instead of crafting designs from scratch every time (wasting tokens and producin
 | 🖥️ **Fullscreen** | One-key fullscreen toggle (press `F`) |
 | ⌨️ **Keyboard Navigation** | Arrow keys, spacebar, touch/swipe support |
 | 📥 **3 Input Modes** | Topic only / Content provided / Script provided |
+| 📐 **4 Layout Styles** | Centered, Wide, Split, Editorial — [browse layouts](https://make-slide.vercel.app) |
+| 📊 **PPTX Export** | Generate PowerPoint files alongside HTML |
+| 🖼️ **Auto Image Search** | Automatically find and place relevant images from Unsplash |
 | 🤖 **Works with Any AI Tool** | Claude Code, Gemini CLI, Codex, Cursor, and more |
 | 🌍 **Language-Agnostic** | Generates content in whatever language you speak |
 | 📊 **CSS-Only Charts** | Bar charts, progress rings, KPI cards — no chart library needed |
@@ -50,7 +53,7 @@ npx make-slide init
 
 This will:
 1. Copy the skill files into your project's `.claude/skills/make-slide/`
-2. Auto-detect your AI config (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`) and inject the `/make-slide` command
+2. Auto-detect your AI config (`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursorrules`) and inject the `/make-slide` command
 3. You're ready! Type `/make-slide` in Claude Code to create presentations
 
 ### Other Commands
@@ -91,24 +94,28 @@ your-project/
 │       └── make-slide/
 │           ├── SKILL.md          ← Main instruction file
 │           └── references/
-│               ├── themes.md     ← 10 themes with GitHub raw URLs
-│               ├── slide-types.md ← 12 slide type patterns
-│               └── html-spec.md  ← HTML requirements
-├── CLAUDE.md                     ← Auto-updated with /make-slide command
+│               ├── themes.md        ← 10 themes + GitHub raw URLs
+│               ├── layouts.md       ← 4 layout styles
+│               ├── slide-types.md   ← 12 slide type patterns
+│               ├── html-spec.md     ← HTML requirements
+│               ├── core-features.md ← Copy-paste JS/CSS for features
+│               └── pptx-spec.md     ← PPTX conversion rules
+├── CLAUDE.md                        ← Auto-updated with /make-slide command
 └── ... your project files
 ```
 
-When you type `/make-slide` in Claude Code, it reads the skill and follows a 9-step workflow:
+When you type `/make-slide` in Claude Code, it reads the skill and follows a 10-step workflow:
 
-1. **Analyze your input** — determine mode (topic / content / script) and slide count
-2. **Choose a theme** — you pick from the gallery or AI recommends one
-3. **Check image needs** — real images or styled CSS placeholders
-4. **Generate outline** — slide-by-slide plan for your approval
-5. **Fetch theme reference** — downloads the theme template from GitHub
-6. **Generate HTML** — builds your presentation matching the theme exactly
-7. **Add speaker notes** — conversational notes with timing cues
-8. **Generate script** — full speaking script (optional)
-9. **Deliver** — saves `index.html` + offers local preview
+1. **Analyze input** — mode (topic / content / script), slide count, output format (HTML / PPTX)
+2. **Choose a theme** — pick from the [gallery](https://make-slide.vercel.app) or AI recommends
+3. **Choose a layout** — Centered, Wide, Split, or Editorial
+4. **Image options** — no images / provide URLs / auto-search from Unsplash
+5. **Generate outline** — slide-by-slide plan for your approval
+6. **Fetch theme + layout reference** — downloads templates from GitHub
+7. **Generate HTML** — builds presentation matching theme + layout exactly
+8. **Add speaker notes** — popup window with timing cues
+9. **Generate script** — full speaking script (optional)
+10. **Deliver** — saves `index.html` (and `presentation.pptx` if PPTX mode)
 
 Theme files are fetched from GitHub on demand — nothing heavy is stored locally.
 
@@ -143,8 +150,16 @@ make-slide/
 │   ├── SKILL.md
 │   └── references/
 │       ├── themes.md
+│       ├── layouts.md
 │       ├── slide-types.md
-│       └── html-spec.md
+│       ├── html-spec.md
+│       ├── core-features.md
+│       └── pptx-spec.md
+├── layouts/                # Layout references (4 styles)
+│   ├── centered/
+│   ├── wide/
+│   ├── split/
+│   └── editorial/
 ├── SKILL.md                # Legacy standalone skill file
 ├── README.md               # This file
 ├── LICENSE                  # MIT License
@@ -247,7 +262,7 @@ npx make-slide init
 
 이 명령어는:
 1. `.claude/skills/make-slide/`에 스킬 파일 복사
-2. AI 설정 파일(`CLAUDE.md`, `AGENTS.md`, `.cursorrules`) 자동 감지 후 `/make-slide` 명령어 주입
+2. AI 설정 파일(`CLAUDE.md`, `AGENTS.md`, `GEMINI.md`, `.cursorrules`) 자동 감지 후 `/make-slide` 명령어 주입
 3. 준비 완료! Claude Code에서 `/make-slide` 입력하면 프레젠테이션 생성
 
 ### 기타 명령어
@@ -283,24 +298,28 @@ your-project/
 │       └── make-slide/
 │           ├── SKILL.md          ← 메인 지침서
 │           └── references/
-│               ├── themes.md     ← 10개 테마 + GitHub raw URL
-│               ├── slide-types.md ← 12가지 슬라이드 타입
-│               └── html-spec.md  ← HTML 요구사항
+│               ├── themes.md        ← 10개 테마 + GitHub raw URL
+│               ├── layouts.md       ← 4가지 레이아웃 스타일
+│               ├── slide-types.md   ← 12가지 슬라이드 타입
+│               ├── html-spec.md     ← HTML 요구사항
+│               ├── core-features.md ← 기본 기능 JS/CSS 코드
+│               └── pptx-spec.md     ← PPTX 변환 규칙
 ├── CLAUDE.md                     ← /make-slide 명령어 자동 추가
 └── ... 프로젝트 파일들
 ```
 
 Claude Code에서 `/make-slide` 입력하면 9단계 워크플로우를 따릅니다:
 
-1. **입력 분석** — 모드(주제/내용/대본) 및 슬라이드 수 결정
-2. **테마 선택** — 갤러리에서 선택하거나 AI가 추천
-3. **이미지 확인** — 실제 이미지 또는 CSS 플레이스홀더
-4. **아웃라인 생성** — 슬라이드별 구성 승인
-5. **테마 레퍼런스 가져오기** — GitHub에서 테마 템플릿 다운로드
-6. **HTML 생성** — 테마에 맞는 프레젠테이션 빌드
-7. **발표자 노트 추가** — 타이밍 큐 포함 노트
-8. **대본 생성** — 전체 발표 대본 (선택)
-9. **전달** — `index.html` 저장 + 로컬 프리뷰
+1. **입력 분석** — 모드(주제/내용/대본), 슬라이드 수, 출력 형식(HTML/PPTX) 결정
+2. **테마 선택** — [갤러리](https://make-slide.vercel.app)에서 선택하거나 AI가 추천
+3. **레이아웃 선택** — Centered, Wide, Split, Editorial 중 선택
+4. **이미지 옵션** — 없음 / URL 제공 / Unsplash 자동 검색
+5. **아웃라인 생성** — 슬라이드별 구성 승인
+6. **테마 + 레이아웃 레퍼런스** — GitHub에서 템플릿 다운로드
+7. **HTML 생성** — 테마 + 레이아웃에 맞는 프레젠테이션 빌드
+8. **발표자 노트** — 팝업 윈도우 방식, 타이밍 큐 포함
+9. **대본 생성** — 전체 발표 대본 (선택)
+10. **전달** — `index.html` 저장 (PPTX 모드면 `presentation.pptx`도)
 
 테마 파일은 GitHub에서 온디맨드로 가져옵니다 — 로컬에 무거운 파일이 저장되지 않습니다.
 
