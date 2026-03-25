@@ -1,6 +1,6 @@
 {
   "name": "make-slide",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "AI presentation skill — generate single-file HTML slides with 10 themes",
   "bin": {
     "make-slide": "./bin/cli.js"

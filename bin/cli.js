@@ -78,7 +78,7 @@ function cmdInit() {
   console.log(`   ✅ ${SKILL_DIR}/`);
 
   // Auto-detect and inject into AI config files
-  const configFiles = ['CLAUDE.md', 'AGENTS.md', '.cursorrules'];
+  const configFiles = ['CLAUDE.md', 'AGENTS.md', 'GEMINI.md', '.cursorrules'];
   let injected = false;
 
   for (const file of configFiles) {
@@ -97,8 +97,8 @@ function cmdInit() {
 
   if (!injected) {
     console.log('');
-    console.log('💡 No AI config file found (CLAUDE.md, AGENTS.md, .cursorrules).');
-    console.log('   To use with Claude Code, add this to your CLAUDE.md:');
+    console.log('💡 No AI config file found (CLAUDE.md, AGENTS.md, GEMINI.md, .cursorrules).');
+    console.log('   To use with your AI tool, add this to your config file:');
     console.log('');
     console.log('   ## /make-slide');
     console.log('   When the user types "/make-slide", read `.claude/skills/make-slide/SKILL.md`');
