@@ -98,6 +98,23 @@ If the user doesn't choose a theme, recommend one based on context:
 - Product launch → `keynote-apple`
 - Casual/team event → `playful`
 
+### Step 2.5: Choose a Layout
+Ask the user which layout style they prefer:
+
+> **Which layout style would you like?**
+> Browse layouts here: https://make-slide.vercel.app (Layouts section)
+>
+> - **Centered** (default) — Classic centered content, clean and balanced
+> - **Wide** — Full-width content, great for data-heavy slides
+> - **Split** — Two-column with text + visuals side by side
+> - **Editorial** — Magazine-style asymmetric, dramatic typography
+
+If the user doesn't choose, default to **centered**.
+
+Read `references/layouts.md` for layout descriptions and `layouts/{name}/reference.html` for the layout reference code.
+
+When generating HTML, combine the chosen **theme** (colors, fonts, design) with the chosen **layout** (content positioning, spacing, structure).
+
 ### Step 3: Image Options
 Ask the user which image approach they prefer:
 
@@ -143,12 +160,15 @@ Fetch the chosen theme's reference files from GitHub:
 Use the raw GitHub URLs listed in `references/themes.md`.
 
 ### Step 6: Generate HTML
-Using the reference.html as the template:
-- Replicate the exact HTML structure, CSS styles, and JS functionality
+Using the theme's reference.html and the layout's reference.html as templates:
+- Use the **theme's** reference.html for visual styling (colors, fonts, design elements)
+- Use the **layout's** reference.html for content structure and positioning
 - Replace the demo content with the user's actual content
 - Keep all interactive features (navigation, fullscreen, speaker notes, etc.)
 - Match the theme's typography, colors, spacing, and animations
 - Ensure all slide types used match the patterns in the reference
+
+Read `references/core-features.md` and use the exact JavaScript code provided for navigation, fullscreen, speaker notes popup, progress bar, and slide counter. Do not rewrite these features — copy the code directly. This ensures consistent behavior across all AI models.
 
 Read `references/html-spec.md` for the full HTML requirements including navigation, fullscreen, PDF export, CDN dependencies, image handling, and code blocks.
 

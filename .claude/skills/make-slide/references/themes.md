@@ -1,5 +1,7 @@
 # Theme List
 
+> **Themes vs Layouts**: Themes control visual appearance (colors, fonts, design elements). Layouts control content positioning and structure. They are independent and can be combined freely — any theme works with any layout. See `references/layouts.md` for layout options.
+
 10 professional themes available for presentations. Each theme includes a complete `reference.html` (template with all slide types) and a `README.md` (design guidelines).
 
 ## Theme Table

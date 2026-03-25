@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split Layout — Reference</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #1a1a2e;
+      --text: #f0f0f0;
+      --text-secondary: rgba(240,240,240,0.6);
+      --accent: #3b82f6;
+      --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); }
+
+    /* ===== Progress Bar ===== */
+    .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 100; transition: width 0.3s ease; }
+
+    /* ===== Slide Counter ===== */
+    .counter { position: fixed; bottom: 20px; right: 30px; font-size: 12px; color: rgba(255,255,255,0.5); font-family: monospace; z-index: 100; }
+
+    /* ===== SPLIT LAYOUT — Core Slide CSS ===== */
+    .slide {
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      text-align: left;
+      padding: 60px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Title and closing slides use single column */
+    .slide.full {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .slide.active { opacity: 1; pointer-events: auto; z-index: 2; }
+
+    /* Stagger animation */
+    .slide.active .a { opacity: 0; animation: fadeInUp 0.4s ease forwards; }
+    .a:nth-child(1) { animation-delay: 0.05s; }
+    .a:nth-child(2) { animation-delay: 0.1s; }
+    .a:nth-child(3) { animation-delay: 0.15s; }
+    .a:nth-child(4) { animation-delay: 0.2s; }
+    .a:nth-child(5) { animation-delay: 0.25s; }
+    .a:nth-child(6) { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Typography ===== */
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; }
+    h2 { font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 12px; }
+    p { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); }
+    .subtitle { font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 16px; }
+
+    .accent { color: var(--accent); }
+    .tag { display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 4px 14px; border-radius: 100px; margin-bottom: 16px; }
+
+    /* Column containers */
+    .col-text { display: flex; flex-direction: column; justify-content: center; }
+    .col-visual { display: flex; align-items: center; justify-content: center; }
+
+    /* Bullet list */
+    ul { list-style: none; }
+    ul li { font-size: 1rem; line-height: 1.7; color: var(--text-secondary); padding: 6px 0; padding-left: 20px; position: relative; }
+    ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+
+    /* Visual placeholder */
+    .visual-box { width: 100%; aspect-ratio: 4/3; background: rgba(59,130,246,0.08); border: 1px dashed rgba(59,130,246,0.25); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+
+    /* Stat card in visual column */
+    .stat-card { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.15); border-radius: 12px; padding: 32px; text-align: center; width: 100%; }
+    .stat-num { font-size: 3.5rem; font-weight: 800; color: var(--accent); line-height: 1; }
+    .stat-label { font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px; }
+
+    /* Comparison columns */
+    .compare-col { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 28px; }
+    .compare-col h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: var(--accent); }
+    .compare-col ul li { font-size: 0.95rem; }
+
+    /* ===== Print / PDF ===== */
+    @media print {
+      .progress, .counter, .controls, nav, button, [class*="hint"], [class*="btn"] { display: none !important; }
+      .slide { page-break-after: always; position: relative !important; opacity: 1 !important; display: grid !important; width: 100vw; height: 100vh; }
+      .slide.full { display: flex !important; }
+      @page { size: landscape; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+  <div class="counter" id="counter"></div>
+
+  <!-- Slide 1: Title (full-width centered) -->
+  <div class="slide full active" data-notes="The split layout divides each slide into two columns. It's perfect for pairing text with visuals or comparing two concepts side by side.">
+    <div>
+      <span class="a tag">Split Layout</span>
+      <h1 class="a">Two Columns<br><span class="accent">Side by Side</span></h1>
+      <p class="a subtitle">Text on one side, visuals on the other — the perfect layout for image-text combos and comparisons.</p>
+    </div>
+  </div>
+
+  <!-- Slide 2: Text + Image -->
+  <div class="slide" data-notes="This is the classic split pattern: text content on the left, a visual on the right. The two halves complement each other.">
+    <div class="col-text">
+      <h2 class="a">Content Meets Visual</h2>
+      <p class="a">The split layout naturally separates explanation from illustration. Your audience reads the text while seeing the visual context.</p>
+      <ul class="a" style="margin-top: 12px;">
+        <li>Text and images side by side</li>
+        <li>Natural reading flow: left to right</li>
+        <li>Each half gets equal weight</li>
+      </ul>
+    </div>
+    <div class="col-visual a">
+      <div class="visual-box">📸</div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Text + Stat Card -->
+  <div class="slide" data-notes="The visual column doesn't have to be an image. Here we use a stat card to emphasize a key number alongside the supporting context.">
+    <div class="col-text">
+      <span class="a tag">Key Metric</span>
+      <h2 class="a">Growth That Matters</h2>
+      <p class="a">Our user base grew dramatically this year. The split layout lets the number speak for itself while the text provides context.</p>
+    </div>
+    <div class="col-visual a">
+      <div class="stat-card">
+        <div class="stat-num">312%</div>
+        <div class="stat-label">Year-over-Year Growth</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: Comparison (two content columns) -->
+  <div class="slide" data-notes="For comparisons, both columns contain text. This works great for pros/cons, before/after, or any two-part comparison.">
+    <div class="compare-col a">
+      <h3>Before</h3>
+      <ul>
+        <li>Manual deployment process</li>
+        <li>2-hour release cycles</li>
+        <li>Frequent rollback incidents</li>
+        <li>Team bottleneck on ops</li>
+      </ul>
+    </div>
+    <div class="compare-col a">
+      <h3>After</h3>
+      <ul>
+        <li>Automated CI/CD pipeline</li>
+        <li>5-minute deployments</li>
+        <li>Zero-downtime releases</li>
+        <li>Self-service for all teams</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 5: Closing (full-width centered) -->
+  <div class="slide full" data-notes="The closing slide returns to full-width centered. Split layout shines when you have complementary content for two halves.">
+    <div>
+      <h1 class="a">Two Sides,<br><span class="accent">One Story</span></h1>
+      <p class="a">Use the split layout whenever content has a natural pairing — text + visual, concept + data, before + after.</p>
+      <p class="a" style="margin-top: 24px; font-size: 0.9rem; color: var(--accent);">Press S for speaker notes · F for fullscreen</p>
+    </div>
+  </div>
+
+  <script>
+    // ===== Slide Navigation =====
+    const slides = [...document.querySelectorAll('.slide')];
+    let current = 0;
+
+    function goTo(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[current].classList.remove('active');
+      slides[index].classList.add('active');
+      current = index;
+      updateProgress();
+      updateCounter();
+      updateNotes();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+      if (e.key.toLowerCase() === 'f') toggleFullscreen();
+      if (e.key.toLowerCase() === 's') toggleNotes();
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) diff > 0 ? goTo(current + 1) : goTo(current - 1);
+    });
+
+    function updateProgress() {
+      document.getElementById('progress').style.width =
+        (current / (slides.length - 1) * 100) + '%';
+    }
+
+    function updateCounter() {
+      document.getElementById('counter').textContent =
+        (current + 1) + ' / ' + slides.length;
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
+      else { document.exitFullscreen(); }
+    }
+
+    let notesWindow = null;
+
+    function toggleNotes() {
+      if (notesWindow && !notesWindow.closed) { notesWindow.close(); notesWindow = null; return; }
+      notesWindow = window.open('', 'SpeakerNotes', 'width=520,height=420,top=80,left=80');
+      notesWindow.document.write(`<!DOCTYPE html>
+<html><head><style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+         background: #1a1a1a; color: #e0e0e0; padding: 24px; }
+  .slide-num { font-size: 12px; color: #888; margin-bottom: 12px; font-family: monospace; }
+  .label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+           color: #666; margin-bottom: 8px; }
+  .notes { font-size: 16px; line-height: 1.8; color: #ccc; }
+</style></head><body>
+  <div class="slide-num" id="sn"></div>
+  <div class="label">Speaker Notes</div>
+  <div class="notes" id="nt"></div>
+</body></html>`);
+      notesWindow.document.close();
+      updateNotes();
+    }
+
+    function updateNotes() {
+      if (!notesWindow || notesWindow.closed) return;
+      try {
+        const note = slides[current].dataset.notes || '(No notes)';
+        notesWindow.document.getElementById('nt').textContent = note;
+        notesWindow.document.getElementById('sn').textContent =
+          'Slide ' + (current + 1) + ' / ' + slides.length;
+      } catch(e) {}
+    }
+
+    updateProgress();
+    updateCounter();
+  </script>
+</body>
+</html>

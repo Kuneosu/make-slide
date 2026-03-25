@@ -657,6 +657,96 @@
 
   </div>
 
+  <!-- Layouts Section -->
+  <header class="header" style="padding-top: 32px;">
+    <div class="header-left">
+      <h1 data-i18n-html="layouts-title"><span>Layouts</span></h1>
+      <p data-i18n="layouts-subtitle">4 layout styles that control content positioning. Combine any layout with any theme.</p>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat" data-i18n-html="stat-layouts"><strong>4</strong> layouts</div>
+    <div class="divider"></div>
+    <div class="stat" data-i18n="stat-combinable">Combinable with all themes</div>
+  </div>
+
+  <div class="grid">
+
+    <!-- Centered -->
+    <a href="/layouts/centered/reference.html" class="card">
+      <div class="card-preview" style="background: #1a1a2e; color: #f0f0f0; flex-direction: column;">
+        <span class="preview-label" style="font-size: 1.2rem;">Centered</span>
+        <span class="preview-sub" style="color: rgba(255,255,255,0.5);">Classic & Balanced</span>
+      </div>
+      <div class="card-body">
+        <h3>Centered</h3>
+        <p data-i18n="desc-layout-centered">Content centered vertically and horizontally. The classic, universal presentation style for talks and pitches.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-default">Default</span>
+          <span class="tag" data-i18n="tag-general">General</span>
+          <span class="tag" data-i18n="tag-keynote">Keynote</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Wide -->
+    <a href="/layouts/wide/reference.html" class="card">
+      <div class="card-preview" style="background: #1a1a2e; color: #f0f0f0; flex-direction: column;">
+        <span class="preview-label" style="font-size: 1.2rem; text-align: left; width: 70%; margin-left: -10%;">Wide</span>
+        <span class="preview-sub" style="color: rgba(255,255,255,0.5);">Full-Width Content</span>
+      </div>
+      <div class="card-body">
+        <h3>Wide</h3>
+        <p data-i18n="desc-layout-wide">Full-width left-aligned content. Maximum horizontal space for tables, charts, and technical content.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-data-analysis">Data Analysis</span>
+          <span class="tag" data-i18n="tag-technical">Technical</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Split -->
+    <a href="/layouts/split/reference.html" class="card">
+      <div class="card-preview" style="background: #1a1a2e; color: #f0f0f0;">
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <span style="font-size: 1rem; font-weight: 700; opacity: 0.7;">Text</span>
+          <span style="width: 1px; height: 32px; background: rgba(59,130,246,0.4);"></span>
+          <span style="font-size: 1rem; font-weight: 700; opacity: 0.7;">Visual</span>
+        </div>
+        <span class="preview-sub" style="color: rgba(255,255,255,0.5);">Two Columns</span>
+      </div>
+      <div class="card-body">
+        <h3>Split</h3>
+        <p data-i18n="desc-layout-split">Two-column layout with text on one side and visuals on the other. Perfect for comparisons and image+text combos.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-comparison">Comparison</span>
+          <span class="tag" data-i18n="tag-visual">Visual</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Editorial -->
+    <a href="/layouts/editorial/reference.html" class="card">
+      <div class="card-preview" style="background: #1a1a2e; color: #f0f0f0; justify-content: flex-end; align-items: flex-start; padding: 20px 24px;">
+        <div>
+          <span class="preview-label" style="font-size: 1.4rem; font-weight: 900; letter-spacing: -0.03em;">Editorial</span>
+        </div>
+        <span class="preview-sub" style="color: rgba(255,255,255,0.5);">Magazine Style</span>
+      </div>
+      <div class="card-body">
+        <h3>Editorial</h3>
+        <p data-i18n="desc-layout-editorial">Magazine-style asymmetric design with dramatic typography. Bold, creative, and design-focused.</p>
+        <div class="tags">
+          <span class="tag" data-i18n="tag-creative">Creative</span>
+          <span class="tag" data-i18n="tag-design">Design</span>
+          <span class="tag" data-i18n="tag-portfolio">Portfolio</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
   <!-- Footer -->
   <footer class="footer">
     <p>make-slide &mdash; AI Presentation Skill &middot; <a href="https://github.com/kuneosu/make-slide">GitHub</a></p>
@@ -711,7 +801,19 @@
           'tag-kpi-dashboard': 'KPI Dashboard',
           'tag-casual-talk': 'Casual Talk',
           'tag-retrospective': 'Retrospective',
-          'footer-license': 'MIT License'
+          'footer-license': 'MIT License',
+          'layouts-title': '<span>Layouts</span>',
+          'layouts-subtitle': '4 layout styles that control content positioning. Combine any layout with any theme.',
+          'stat-layouts': '<strong>4</strong> layouts',
+          'stat-combinable': 'Combinable with all themes',
+          'desc-layout-centered': 'Content centered vertically and horizontally. The classic, universal presentation style for talks and pitches.',
+          'desc-layout-wide': 'Full-width left-aligned content. Maximum horizontal space for tables, charts, and technical content.',
+          'desc-layout-split': 'Two-column layout with text on one side and visuals on the other. Perfect for comparisons and image+text combos.',
+          'desc-layout-editorial': 'Magazine-style asymmetric design with dramatic typography. Bold, creative, and design-focused.',
+          'tag-default': 'Default',
+          'tag-technical': 'Technical',
+          'tag-comparison': 'Comparison',
+          'tag-visual': 'Visual'
         },
         ko: {
           'title': '<span>make-slide</span> 테마 갤러리',
@@ -755,7 +857,19 @@
           'tag-kpi-dashboard': 'KPI 대시보드',
           'tag-casual-talk': '캐주얼 토크',
           'tag-retrospective': '회고',
-          'footer-license': 'MIT 라이선스'
+          'footer-license': 'MIT 라이선스',
+          'layouts-title': '<span>레이아웃</span>',
+          'layouts-subtitle': '콘텐츠 배치를 결정하는 4가지 레이아웃 스타일. 모든 테마와 자유롭게 조합 가능.',
+          'stat-layouts': '<strong>4</strong>개 레이아웃',
+          'stat-combinable': '모든 테마와 조합 가능',
+          'desc-layout-centered': '콘텐츠를 수직·수평 중앙에 배치. 발표, 피칭에 적합한 클래식 스타일.',
+          'desc-layout-wide': '전체 너비 좌측 정렬. 테이블, 차트, 기술 콘텐츠에 최대 가로 공간.',
+          'desc-layout-split': '텍스트와 비주얼을 양쪽에 배치하는 2단 레이아웃. 비교, 이미지+텍스트에 적합.',
+          'desc-layout-editorial': '매거진 스타일 비대칭 디자인과 드라마틱한 타이포그래피. 크리에이티브 발표에 최적.',
+          'tag-default': '기본',
+          'tag-technical': '기술',
+          'tag-comparison': '비교',
+          'tag-visual': '비주얼'
         }
       };
 

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editorial Layout — Reference</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #1a1a2e;
+      --text: #f0f0f0;
+      --text-secondary: rgba(240,240,240,0.6);
+      --accent: #3b82f6;
+      --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); }
+
+    /* ===== Progress Bar ===== */
+    .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 100; transition: width 0.3s ease; }
+
+    /* ===== Slide Counter ===== */
+    .counter { position: fixed; bottom: 20px; right: 30px; font-size: 12px; color: rgba(255,255,255,0.5); font-family: monospace; z-index: 100; }
+
+    /* ===== EDITORIAL LAYOUT — Core Slide CSS ===== */
+    .slide {
+      position: absolute; inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: flex-start;
+      text-align: left;
+      padding: 60px 80px 80px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .slide.active { opacity: 1; pointer-events: auto; z-index: 2; }
+
+    /* Stagger animation */
+    .slide.active .a { opacity: 0; animation: fadeInUp 0.4s ease forwards; }
+    .a:nth-child(1) { animation-delay: 0.05s; }
+    .a:nth-child(2) { animation-delay: 0.1s; }
+    .a:nth-child(3) { animation-delay: 0.15s; }
+    .a:nth-child(4) { animation-delay: 0.2s; }
+    .a:nth-child(5) { animation-delay: 0.25s; }
+    .a:nth-child(6) { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Editorial Typography ===== */
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      max-width: 70%;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      max-width: 70%;
+      margin-bottom: 14px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 50%;
+    }
+
+    .accent { color: var(--accent); }
+
+    .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    /* Large number / pull quote */
+    .big-number {
+      font-size: clamp(5rem, 12vw, 10rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      color: var(--accent);
+      opacity: 0.15;
+      position: absolute;
+      top: 60px;
+      right: 80px;
+    }
+
+    .pull-quote {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      max-width: 65%;
+      font-style: italic;
+    }
+
+    .quote-source {
+      font-size: 0.9rem;
+      color: var(--accent);
+      margin-top: 16px;
+      font-style: normal;
+    }
+
+    /* Editorial list — minimal */
+    .ed-list { max-width: 55%; margin-top: 12px; }
+    .ed-list .item { display: flex; align-items: baseline; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .ed-list .item:last-child { border-bottom: none; }
+    .ed-list .num { font-size: 0.8rem; font-weight: 700; color: var(--accent); font-family: monospace; }
+    .ed-list .label { font-size: 1rem; color: var(--text-secondary); }
+
+    /* Decorative line */
+    .line { width: 48px; height: 3px; background: var(--accent); margin-bottom: 20px; }
+
+    /* ===== Print / PDF ===== */
+    @media print {
+      .progress, .counter, .controls, nav, button, [class*="hint"], [class*="btn"] { display: none !important; }
+      .slide { page-break-after: always; position: relative !important; opacity: 1 !important; display: flex !important; width: 100vw; height: 100vh; }
+      @page { size: landscape; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+  <div class="counter" id="counter"></div>
+
+  <!-- Slide 1: Title — dramatic bottom-left positioning -->
+  <div class="slide active" data-notes="The editorial layout creates drama through asymmetry. Content sits at the bottom-left, leaving vast negative space that draws the eye to the headline.">
+    <span class="a tag">Editorial Layout</span>
+    <h1 class="a">Magazine-Style<br><span class="accent">Asymmetric Design</span></h1>
+    <p class="a">Dramatic typography, deliberate whitespace, and editorial positioning that commands attention.</p>
+  </div>
+
+  <!-- Slide 2: Content with big background number -->
+  <div class="slide" data-notes="The oversized number in the background creates visual depth. The actual content stays anchored at the bottom-left, creating a magazine editorial feel.">
+    <div class="a big-number">01</div>
+    <div class="a line"></div>
+    <h2 class="a">Design Principles</h2>
+    <div class="a ed-list">
+      <div class="item"><span class="num">01</span><span class="label">Asymmetry creates visual tension and interest</span></div>
+      <div class="item"><span class="num">02</span><span class="label">Large headlines anchor the viewer's attention</span></div>
+      <div class="item"><span class="num">03</span><span class="label">Negative space is an active design element</span></div>
+      <div class="item"><span class="num">04</span><span class="label">Narrow body text improves readability</span></div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Pull quote -->
+  <div class="slide" data-notes="Editorial layouts shine with pull quotes. The dramatic sizing and positioning make a single sentence feel like a magazine spread.">
+    <span class="a tag">Insight</span>
+    <div class="a pull-quote">"Good design is as little design as possible."</div>
+    <div class="a quote-source">— Dieter Rams</div>
+  </div>
+
+  <!-- Slide 4: Data with editorial treatment -->
+  <div class="slide" data-notes="Even data can get the editorial treatment. The oversized stat number in the background provides context while the detail sits at the bottom.">
+    <div class="a big-number">87%</div>
+    <span class="a tag">Research Finding</span>
+    <h2 class="a">First Impressions<br>Are Visual</h2>
+    <p class="a">87% of information transmitted to the brain is visual. Editorial design leverages this by making every slide a visual statement, not just a container for text.</p>
+  </div>
+
+  <!-- Slide 5: Closing -->
+  <div class="slide" data-notes="Close with a bold statement. The editorial layout's bottom-left anchoring creates a signature look that audiences remember.">
+    <div class="a line"></div>
+    <h1 class="a">Make Every Slide<br><span class="accent">A Statement</span></h1>
+    <p class="a">Editorial layout — for presentations that feel like art.</p>
+    <p class="a" style="margin-top: 24px; font-size: 0.9rem; color: var(--accent); max-width: 100%;">Press S for speaker notes · F for fullscreen</p>
+  </div>
+
+  <script>
+    // ===== Slide Navigation =====
+    const slides = [...document.querySelectorAll('.slide')];
+    let current = 0;
+
+    function goTo(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[current].classList.remove('active');
+      slides[index].classList.add('active');
+      current = index;
+      updateProgress();
+      updateCounter();
+      updateNotes();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+      if (e.key.toLowerCase() === 'f') toggleFullscreen();
+      if (e.key.toLowerCase() === 's') toggleNotes();
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) diff > 0 ? goTo(current + 1) : goTo(current - 1);
+    });
+
+    function updateProgress() {
+      document.getElementById('progress').style.width =
+        (current / (slides.length - 1) * 100) + '%';
+    }
+
+    function updateCounter() {
+      document.getElementById('counter').textContent =
+        (current + 1) + ' / ' + slides.length;
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
+      else { document.exitFullscreen(); }
+    }
+
+    let notesWindow = null;
+
+    function toggleNotes() {
+      if (notesWindow && !notesWindow.closed) { notesWindow.close(); notesWindow = null; return; }
+      notesWindow = window.open('', 'SpeakerNotes', 'width=520,height=420,top=80,left=80');
+      notesWindow.document.write(`<!DOCTYPE html>
+<html><head><style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+         background: #1a1a1a; color: #e0e0e0; padding: 24px; }
+  .slide-num { font-size: 12px; color: #888; margin-bottom: 12px; font-family: monospace; }
+  .label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+           color: #666; margin-bottom: 8px; }
+  .notes { font-size: 16px; line-height: 1.8; color: #ccc; }
+</style></head><body>
+  <div class="slide-num" id="sn"></div>
+  <div class="label">Speaker Notes</div>
+  <div class="notes" id="nt"></div>
+</body></html>`);
+      notesWindow.document.close();
+      updateNotes();
+    }
+
+    function updateNotes() {
+      if (!notesWindow || notesWindow.closed) return;
+      try {
+        const note = slides[current].dataset.notes || '(No notes)';
+        notesWindow.document.getElementById('nt').textContent = note;
+        notesWindow.document.getElementById('sn').textContent =
+          'Slide ' + (current + 1) + ' / ' + slides.length;
+      } catch(e) {}
+    }
+
+    updateProgress();
+    updateCounter();
+  </script>
+</body>
+</html>

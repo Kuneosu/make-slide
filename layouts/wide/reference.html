@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wide Layout — Reference</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <style>
+    /* ===== Reset & Base ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #1a1a2e;
+      --text: #f0f0f0;
+      --text-secondary: rgba(240,240,240,0.6);
+      --accent: #3b82f6;
+      --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); }
+
+    /* ===== Progress Bar ===== */
+    .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 100; transition: width 0.3s ease; }
+
+    /* ===== Slide Counter ===== */
+    .counter { position: fixed; bottom: 20px; right: 30px; font-size: 12px; color: rgba(255,255,255,0.5); font-family: monospace; z-index: 100; }
+
+    /* ===== WIDE LAYOUT — Core Slide CSS ===== */
+    .slide {
+      position: absolute; inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      text-align: left;
+      padding: 60px 80px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .slide.active { opacity: 1; pointer-events: auto; z-index: 2; }
+
+    /* Stagger animation */
+    .slide.active .a { opacity: 0; animation: fadeInUp 0.4s ease forwards; }
+    .a:nth-child(1) { animation-delay: 0.05s; }
+    .a:nth-child(2) { animation-delay: 0.1s; }
+    .a:nth-child(3) { animation-delay: 0.15s; }
+    .a:nth-child(4) { animation-delay: 0.2s; }
+    .a:nth-child(5) { animation-delay: 0.25s; }
+    .a:nth-child(6) { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== Typography ===== */
+    h1 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 16px; width: 100%; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 16px; width: 100%; }
+    p { font-size: 1.1rem; line-height: 1.7; color: var(--text-secondary); width: 100%; }
+    .subtitle { font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 24px; }
+
+    .accent { color: var(--accent); }
+    .tag { display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 4px 14px; border-radius: 100px; margin-bottom: 16px; }
+
+    /* Full-width content area */
+    .content { width: 100%; }
+
+    /* Wide bullet list */
+    ul { list-style: none; width: 100%; }
+    ul li { font-size: 1.05rem; line-height: 1.7; color: var(--text-secondary); padding: 8px 0; padding-left: 24px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    ul li:last-child { border-bottom: none; }
+    ul li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+
+    /* Data table */
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th { text-align: left; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); padding: 10px 16px; border-bottom: 2px solid var(--accent); }
+    td { font-size: 1rem; color: var(--text-secondary); padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    tr:hover td { color: var(--text); }
+
+    /* Bar chart */
+    .bar-chart { width: 100%; margin-top: 16px; }
+    .bar-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+    .bar-label { width: 120px; font-size: 0.9rem; color: var(--text-secondary); flex-shrink: 0; }
+    .bar-track { flex: 1; height: 28px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-size: 0.8rem; font-weight: 600; color: white; }
+
+    /* Image placeholder */
+    .img-placeholder { width: 100%; height: 200px; background: rgba(59,130,246,0.1); border: 1px dashed rgba(59,130,246,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 16px 0; }
+
+    /* ===== Print / PDF ===== */
+    @media print {
+      .progress, .counter, .controls, nav, button, [class*="hint"], [class*="btn"] { display: none !important; }
+      .slide { page-break-after: always; position: relative !important; opacity: 1 !important; display: flex !important; width: 100vw; height: 100vh; }
+      @page { size: landscape; margin: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+  <div class="counter" id="counter"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide active" data-notes="The wide layout maximizes horizontal space. Everything is left-aligned and spans the full width — perfect for data-heavy and technical presentations.">
+    <span class="a tag">Wide Layout</span>
+    <h1 class="a">Full-Width Content<br><span class="accent">Maximum Space</span></h1>
+    <p class="a subtitle">Left-aligned, full-width content area designed for data-heavy and technical presentations.</p>
+  </div>
+
+  <!-- Slide 2: Content with list -->
+  <div class="slide" data-notes="Notice how the bullet list spans the full width. The left alignment makes it easier to scan long content quickly, like reading a document.">
+    <h2 class="a">Wide Layout Advantages</h2>
+    <div class="content a">
+      <ul>
+        <li>Full horizontal space — no wasted margins on content sides</li>
+        <li>Left-aligned text for natural reading flow</li>
+        <li>Ideal for tables, code blocks, and detailed content</li>
+        <li>Professional, document-like feel</li>
+        <li>Accommodates more information per slide without feeling crowded</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Slide 3: Data Table -->
+  <div class="slide" data-notes="Tables are where the wide layout really shines. The full width gives each column breathing room, making data easy to scan.">
+    <h2 class="a">Quarterly Results</h2>
+    <div class="content a">
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>YoY Change</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Revenue</td><td>$2.4M</td><td>$2.8M</td><td>$3.1M</td><td>$3.6M</td><td style="color:var(--accent)">+50%</td></tr>
+          <tr><td>Users</td><td>140K</td><td>185K</td><td>220K</td><td>310K</td><td style="color:var(--accent)">+121%</td></tr>
+          <tr><td>Retention</td><td>72%</td><td>76%</td><td>81%</td><td>85%</td><td style="color:var(--accent)">+13pp</td></tr>
+          <tr><td>NPS Score</td><td>42</td><td>48</td><td>55</td><td>62</td><td style="color:var(--accent)">+20</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Slide 4: Bar Chart -->
+  <div class="slide" data-notes="CSS bar charts work great in the wide layout. The full-width bars give a clear sense of proportion and are easy to compare.">
+    <h2 class="a">Technology Adoption</h2>
+    <div class="content a">
+      <div class="bar-chart">
+        <div class="bar-row"><span class="bar-label">React</span><div class="bar-track"><div class="bar-fill" style="width:82%">82%</div></div></div>
+        <div class="bar-row"><span class="bar-label">TypeScript</span><div class="bar-track"><div class="bar-fill" style="width:71%">71%</div></div></div>
+        <div class="bar-row"><span class="bar-label">Next.js</span><div class="bar-track"><div class="bar-fill" style="width:54%">54%</div></div></div>
+        <div class="bar-row"><span class="bar-label">Tailwind</span><div class="bar-track"><div class="bar-fill" style="width:47%">47%</div></div></div>
+        <div class="bar-row"><span class="bar-label">Svelte</span><div class="bar-track"><div class="bar-fill" style="width:23%">23%</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 5: Closing -->
+  <div class="slide" data-notes="Wrap up with the key takeaway. Even the closing slide benefits from left-alignment in the wide layout — it feels more direct.">
+    <h1 class="a">Use Wide When<br><span class="accent">Content Needs Room</span></h1>
+    <p class="a">Best for data tables, charts, technical content, and any slide where horizontal space matters.</p>
+    <p class="a" style="margin-top: 24px; font-size: 0.9rem; color: var(--accent);">Press S for speaker notes · F for fullscreen</p>
+  </div>
+
+  <script>
+    // ===== Slide Navigation =====
+    const slides = [...document.querySelectorAll('.slide')];
+    let current = 0;
+
+    function goTo(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[current].classList.remove('active');
+      slides[index].classList.add('active');
+      current = index;
+      updateProgress();
+      updateCounter();
+      updateNotes();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+      if (e.key.toLowerCase() === 'f') toggleFullscreen();
+      if (e.key.toLowerCase() === 's') toggleNotes();
+    });
+
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) diff > 0 ? goTo(current + 1) : goTo(current - 1);
+    });
+
+    function updateProgress() {
+      document.getElementById('progress').style.width =
+        (current / (slides.length - 1) * 100) + '%';
+    }
+
+    function updateCounter() {
+      document.getElementById('counter').textContent =
+        (current + 1) + ' / ' + slides.length;
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
+      else { document.exitFullscreen(); }
+    }
+
+    let notesWindow = null;
+
+    function toggleNotes() {
+      if (notesWindow && !notesWindow.closed) { notesWindow.close(); notesWindow = null; return; }
+      notesWindow = window.open('', 'SpeakerNotes', 'width=520,height=420,top=80,left=80');
+      notesWindow.document.write(`<!DOCTYPE html>
+<html><head><style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+         background: #1a1a1a; color: #e0e0e0; padding: 24px; }
+  .slide-num { font-size: 12px; color: #888; margin-bottom: 12px; font-family: monospace; }
+  .label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+           color: #666; margin-bottom: 8px; }
+  .notes { font-size: 16px; line-height: 1.8; color: #ccc; }
+</style></head><body>
+  <div class="slide-num" id="sn"></div>
+  <div class="label">Speaker Notes</div>
+  <div class="notes" id="nt"></div>
+</body></html>`);
+      notesWindow.document.close();
+      updateNotes();
+    }
+
+    function updateNotes() {
+      if (!notesWindow || notesWindow.closed) return;
+      try {
+        const note = slides[current].dataset.notes || '(No notes)';
+        notesWindow.document.getElementById('nt').textContent = note;
+        notesWindow.document.getElementById('sn').textContent =
+          'Slide ' + (current + 1) + ' / ' + slides.length;
+      } catch(e) {}
+    }
+
+    updateProgress();
+    updateCounter();
+  </script>
+</body>
+</html>
