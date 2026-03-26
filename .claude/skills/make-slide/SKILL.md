@@ -130,7 +130,7 @@ Ask the user which image approach they prefer:
 - **Option B** → Mark image positions in the outline, ask user for URLs, use `<img src>` with `loading="lazy"` and descriptive `alt` text
 - **Option C** → Automatically search and place images, but be selective:
   1. NOT every slide needs an image. Only add images to slides where a visual genuinely enhances understanding (e.g., concept slides, example slides, section dividers). Skip images for quote slides, code slides, data/chart slides, comparison slides, and agenda slides.
-  2. Aim for roughly 30-40% of slides having images — not all of them. For a 15-slide deck, that means 5-6 slides should have images. Section divider backgrounds alone are not enough.
+  2. Aim for roughly 30-40% of slides having images — not all of them.
   3. Determine a relevant English search keyword based on the slide content.
   4. Use Unsplash direct photo URLs: `https://images.unsplash.com/photo-{PHOTO_ID}?w=800&h=600&fit=crop`
      - To find valid photo IDs, search the web for `site:unsplash.com {keyword}` and extract the photo ID from the URL.
@@ -183,8 +183,6 @@ Add speaker notes as `data-notes` attributes on each slide's `<div>`:
 - Include transitions between slides (e.g., "Now let's move on to...")
 
 **Speaker Notes Panel must be a separate popup window** using `window.open()`. Do NOT render notes inline at the bottom of the slide — this breaks the slide layout. The `S` key should toggle a popup window that shows the current slide's notes and auto-updates on slide change. See `references/html-spec.md` for the implementation pattern.
-
-**Live Edit Mode**: Every generated presentation includes a built-in edit mode. Press `E` to toggle — users can click any text to edit it directly in the browser. Speaker notes are also editable in the popup window. Changes are saved via the Save button to localStorage and persist across page reloads. Include the edit mode code from `references/core-features.md` section 8. Important: when edit mode is active, disable click-based slide navigation (clicking empty areas should not advance slides while editing). Place the edit bar at **bottom-right** to avoid overlapping with the fullscreen button at top-right.
 
 ### Step 8: Generate Script (Mode A and B only)
 For Mode A and B, also generate a separate `script.md` file containing:

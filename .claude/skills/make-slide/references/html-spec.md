@@ -30,7 +30,6 @@ Every generated presentation includes all of the following features. These ensur
 - `Space`: Next slide
 - `F`: Toggle fullscreen
 - `S`: Toggle speaker notes panel
-- `E`: Toggle live edit mode (contenteditable on text elements, localStorage save)
 - `Escape`: Exit fullscreen
 
 ### Slide Counter
@@ -70,15 +69,6 @@ Every generated presentation includes all of the following features. These ensur
     // Update content with current slide's data-notes
   }
   ```
-
-### Live Edit Mode
-- `E` key toggles edit mode on/off
-- In edit mode, all text elements become contenteditable
-- Visual indicator: dashed blue outline on editable elements, solid on focus
-- Changes auto-save to localStorage (key: `make-slide-edits-{pathname}`)
-- Speaker notes in the popup window are also editable in edit mode
-- Reset button appears in edit mode to restore original content
-- Edit button and reset button hidden in print/PDF mode
 
 ### Touch/Swipe Navigation
 - Swipe left → Next slide
