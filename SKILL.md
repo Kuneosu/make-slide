@@ -197,6 +197,7 @@ Every generated presentation **MUST** include all of the following features. The
 - `Space`: Next slide
 - `F`: Toggle fullscreen
 - `S`: Toggle speaker notes panel
+- `E`: Toggle live edit mode
 - `Escape`: Exit fullscreen
 
 ### Slide Counter

@@ -184,6 +184,8 @@ Add speaker notes as `data-notes` attributes on each slide's `<div>`:
 
 **Speaker Notes Panel must be a separate popup window** using `window.open()`. Do NOT render notes inline at the bottom of the slide — this breaks the slide layout. The `S` key should toggle a popup window that shows the current slide's notes and auto-updates on slide change. See `references/html-spec.md` for the implementation pattern.
 
+**Live Edit Mode**: Every generated presentation includes a built-in edit mode. Press `E` to toggle — users can click any text to edit it directly in the browser. Speaker notes are also editable in the popup window. All changes are saved to localStorage and persist across page reloads. Include the edit mode code from `references/core-features.md` section 8.
+
 ### Step 8: Generate Script (Mode A and B only)
 For Mode A and B, also generate a separate `script.md` file containing:
 - Full speaking script organized by slide
