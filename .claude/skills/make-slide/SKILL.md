@@ -215,7 +215,7 @@ Use the screenshot-based conversion pipeline with Puppeteer + PptxGenJS:
    - Opens the HTML file in a headless browser with viewport 1280×720 (16:9)
    - For EACH slide:
      a. Navigate to that slide (set it as active, remove active class from others)
-     b. **Wait for ALL animations to complete** — add a delay of at least 1000ms after activating the slide, or better: disable all CSS animations/transitions before capturing by injecting `* { animation: none !important; transition: none !important; }`
+     b. **Disable animations and force visibility** — inject CSS to disable all animations/transitions AND force `.a` elements visible: `* { animation: none !important; transition: none !important; } .slide.active .a, .a { opacity: 1 !important; transform: none !important; }`. Also wait for font loading with `document.fonts.ready`.
      c. **Hide all other slides completely** — ensure only the current slide is visible (opacity:1, display:flex) and all others are hidden (opacity:0, display:none). This prevents ghost/residue from previous slides.
      d. Take a full-page screenshot of the viewport at **2x resolution** (deviceScaleFactor: 2) for crisp text
    - Insert each screenshot into PPTX as a **full-slide image** covering the entire slide area (x:0, y:0, w:'100%', h:'100%')
@@ -224,8 +224,11 @@ Use the screenshot-based conversion pipeline with Puppeteer + PptxGenJS:
 
 **Critical: Preventing ghost slides and small content**
 ```javascript
-// Before each screenshot, inject this CSS to disable animations
-await page.addStyleTag({ content: '*, *::before, *::after { animation: none !important; transition: none !important; animation-delay: 0s !important; }' });
+// Before each screenshot, inject CSS to disable animations AND force animated elements visible
+await page.addStyleTag({ content: '*, *::before, *::after { animation: none !important; transition: none !important; animation-delay: 0s !important; } .slide.active .a, .a { opacity: 1 !important; transform: none !important; }' });
+
+// Wait for fonts to load
+await page.evaluateHandle('document.fonts.ready');
 
 // Hide all slides, then show only current
 await page.evaluate((idx) => {

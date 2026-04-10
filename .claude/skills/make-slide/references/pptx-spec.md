@@ -97,10 +97,13 @@ Workflow:
 
 **Problem: Ghost/residue from previous slides appearing in screenshots**
 ```javascript
-// BEFORE capturing, disable ALL animations and transitions
+// BEFORE capturing, disable ALL animations and force animated elements to final state
 await page.addStyleTag({ 
-  content: '*, *::before, *::after { animation: none !important; transition: none !important; animation-delay: 0s !important; opacity: 1 !important; }' 
+  content: '*, *::before, *::after { animation: none !important; transition: none !important; animation-delay: 0s !important; } .slide.active .a, .a { opacity: 1 !important; transform: none !important; }' 
 });
+
+// Wait for fonts to load before capture
+await page.evaluateHandle('document.fonts.ready');
 
 // For each slide, hide ALL others completely
 await page.evaluate((idx) => {
